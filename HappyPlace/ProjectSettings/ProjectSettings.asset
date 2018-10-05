@@ -125,6 +125,7 @@ PlayerSettings:
   m_HolographicPauseOnTrackingLoss: 1
   xboxOneDisableKinectGpuReservation: 0
   xboxOneEnable7thCore: 0
+  isWsaHolographicRemotingEnabled: 0
   vrSettings:
     cardboard:
       depthFormat: 0
@@ -150,7 +151,8 @@ PlayerSettings:
   resolutionScalingMode: 0
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
-  applicationIdentifier: {}
+  applicationIdentifier:
+    Standalone: com.oculus.UnitySample
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16
@@ -576,7 +578,18 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 1
   webGLLinkerTarget: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    4: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    7: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    13: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    18: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    19: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    21: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    23: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    25: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    26: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    27: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
