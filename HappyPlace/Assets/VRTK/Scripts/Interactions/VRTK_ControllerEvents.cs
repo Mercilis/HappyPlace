@@ -61,8 +61,8 @@ namespace VRTK
         /// <param name="TouchpadPress">The touchpad is pressed (to the point of hearing a click).</param>
         /// <param name="ButtonOneTouch">The button one is touched.</param>
         /// <param name="ButtonOnePress">The button one is pressed.</param>
-        /// <param name="ButtonTwoTouch">The button one is touched.</param>
-        /// <param name="ButtonTwoPress">The button one is pressed.</param>
+        /// <param name="ButtonTwoTouch">The button two is touched.</param>
+        /// <param name="ButtonTwoPress">The button two is pressed.</param>
         /// <param name="StartMenuPress">The button one is pressed.</param>
         public enum ButtonAlias
         {
