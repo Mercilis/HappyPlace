@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlaceableObject : MonoBehaviour {
     /// <summary>
     /// The distance at which the object with hover above the ground when it is selected.
@@ -39,22 +40,37 @@ public class PlaceableObject : MonoBehaviour {
     /// Collider will be a trigger to determine if it overlaps with other objects, because if it does then it is not a valid placement.
     /// </summary>
     private Collider m_collider;
+    /// <summary>
+    /// Will keep track of how many objects are overlapping
+    /// </summary>
+    private int m_currentCollisions = 0;
+    /// <summary>
+    /// Need a kinematic rigidbody in order for the object to be movable and still check for collisions.
+    /// </summary>
+    private Rigidbody m_rigidbody;
 
     private void Start()
     {
         m_collider = GetComponent<Collider>();
+        m_rigidbody = GetComponent<Rigidbody>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         //If another collider collides with this object's, then IsValidPlacement will be set to false
         IsValidPlacement = false;
+        m_currentCollisions++;
         //Will need to change any visual indicators to RED
     }
 
     private void OnTriggerExit(Collider other)
     {
         //Check if there are any other objects overlapping other than the one that just left, if there isn't then change IsValidPlacement to true
-        //If IsValidPlacement is changed to true, then will need to change any visual indicators to GREEN
+        m_currentCollisions--;
+        if(m_currentCollisions <= 0)
+        {
+            //If IsValidPlacement is changed to true, then will need to change any visual indicators to GREEN
+            IsValidPlacement = true;
+        }
     }
 }
