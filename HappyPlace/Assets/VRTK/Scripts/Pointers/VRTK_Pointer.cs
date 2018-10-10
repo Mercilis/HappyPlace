@@ -27,7 +27,7 @@ namespace VRTK
         [Tooltip("The button used to activate/deactivate the pointer.")]
         public VRTK_ControllerEvents.ButtonAlias activationButton = VRTK_ControllerEvents.ButtonAlias.TouchpadPress;
         [Tooltip("If this is checked then the Activation Button needs to be continuously held down to keep the pointer active. If this is unchecked then the Activation Button works as a toggle, the first press/release enables the pointer and the second press/release disables the pointer.")]
-        public bool holdButtonToActivate = true;
+        public bool holdButtonToActivate = false;
         [Tooltip("If this is checked then the pointer will be toggled on when the script is enabled.")]
         public bool activateOnEnable = false;
         [Tooltip("The time in seconds to delay the pointer being able to be active again.")]
@@ -36,7 +36,7 @@ namespace VRTK
         [Header("Pointer Selection Settings")]
 
         [Tooltip("The button used to execute the select action at the pointer's target position.")]
-        public VRTK_ControllerEvents.ButtonAlias selectionButton = VRTK_ControllerEvents.ButtonAlias.TouchpadPress;
+        public VRTK_ControllerEvents.ButtonAlias selectionButton = VRTK_ControllerEvents.ButtonAlias.ButtonOnePress;
         [Tooltip("If this is checked then the pointer selection action is executed when the Selection Button is pressed down. If this is unchecked then the selection action is executed when the Selection Button is released.")]
         public bool selectOnPress = false;
         [Tooltip("The time in seconds to delay the pointer being able to execute the select action again.")]
@@ -47,9 +47,9 @@ namespace VRTK
         [Header("Pointer Interaction Settings")]
 
         [Tooltip("If this is checked then the pointer will be an extension of the controller and able to interact with Interactable Objects.")]
-        public bool interactWithObjects = false;
+        public bool interactWithObjects = true;
         [Tooltip("If `Interact With Objects` is checked and this is checked then when an object is grabbed with the pointer touching it, the object will attach to the pointer tip and not snap to the controller.")]
-        public bool grabToPointerTip = false;
+        public bool grabToPointerTip = true;
 
         [Header("Pointer Customisation Settings")]
 

@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VRTK;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
-public class PlaceableObject : MonoBehaviour {
+public class PlaceableObject : VRTK_InteractableObject {
     /// <summary>
     /// The distance at which the object with hover above the ground when it is selected.
     /// </summary>
@@ -72,5 +73,22 @@ public class PlaceableObject : MonoBehaviour {
             //If IsValidPlacement is changed to true, then will need to change any visual indicators to GREEN
             IsValidPlacement = true;
         }
+    }
+
+    public override void StartUsing(VRTK_InteractUse usingObject)
+    {
+        base.StartUsing(usingObject);
+        //spinSpeed = 360f;
+    }
+
+    public override void StopUsing(VRTK_InteractUse usingObject)
+    {
+        base.StopUsing(usingObject);
+        //spinSpeed = 0f;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
     }
 }

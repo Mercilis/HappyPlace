@@ -27,7 +27,7 @@
         private void DebugLogger(uint index, string action, Transform target, RaycastHit raycastHit, float distance, Vector3 tipPosition)
         {
             string targetName = (target ? target.name : "<NO VALID TARGET>");
-            string colliderName = (raycastHit.collider ? raycastHit.collider.name : "<NO VALID COLLIDER>");
+            string colliderName = (raycastHit.collider ?  raycastHit.collider.name : "<NO VALID COLLIDER>");
             VRTK_Logger.Info("Controller on index '" + index + "' is " + action + " at a distance of " + distance + " on object named [" + targetName + "] on the collider named [" + colliderName + "] - the pointer tip position is/was: " + tipPosition);
         }
 

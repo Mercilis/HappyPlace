@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
     #region AssetBundleStuff
     private AssetBundle m_realistForestAssetBundle;
     public string[] AllRealisticForestNames { get; private set; }
+    public string[] AllRealisticForestSimplifiedNames { get; private set; }
     #endregion
 
     #region PlayerControllers
@@ -23,17 +24,18 @@ public class GameManager : MonoBehaviour {
         var myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
         if (myLoadedAssetBundle == null)
         {
-            Debug.Log("Failed to load AssetBundle!");
+            Debug.Log("Failed to load AssetBundle realisticforest!");
             return;
         }
         m_realistForestAssetBundle = myLoadedAssetBundle;
         AllRealisticForestNames = m_realistForestAssetBundle.GetAllAssetNames();
+        AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
         CleanUpRealisticForestNames();
     }
 
     private void Update()
     {
-        if(Input.GetButtonDown("Fire1"))
+        if(Input.GetKeyDown(KeyCode.E))
         {
             SpawnTreeTest();
         }
@@ -41,16 +43,20 @@ public class GameManager : MonoBehaviour {
 
     private void SpawnTreeTest()
     {
-        GameObject prefab = m_realistForestAssetBundle.LoadAsset<GameObject>("SM_Tree_Pine_01");
-        prefab.AddComponent<BoxCollider>();
-        BoxCollider boxCollider = prefab.GetComponent<BoxCollider>();
-        boxCollider.isTrigger = true;
-        MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
-        boxCollider.center = renderer.bounds.center;
-        boxCollider.size = renderer.bounds.size;
-        prefab.AddComponent<Rigidbody>();
-        prefab.GetComponent<Rigidbody>().isKinematic = true;
-        prefab.AddComponent<PlaceableObject>();
+        
+        GameObject prefab = m_realistForestAssetBundle.LoadAsset<GameObject>(AllRealisticForestNames[(int)(Random.value * AllRealisticForestNames.Length)]);
+        if(!prefab.GetComponent<Rigidbody>())
+        {
+            prefab.AddComponent<BoxCollider>();
+            BoxCollider boxCollider = prefab.GetComponent<BoxCollider>();
+            boxCollider.isTrigger = true;
+            MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
+            boxCollider.center = renderer.bounds.center;
+            boxCollider.size = renderer.bounds.size;
+            prefab.AddComponent<Rigidbody>();
+            prefab.GetComponent<Rigidbody>().isKinematic = true;
+            prefab.AddComponent<PlaceableObject>();
+        }
         Instantiate(prefab);
     }
 
@@ -106,7 +112,7 @@ public class GameManager : MonoBehaviour {
                 s = s.Replace(".prefab", string.Empty);
             }
             //print(s);
-            AllRealisticForestNames[i] = s;
+            AllRealisticForestSimplifiedNames[i] = s;
         }
     }
 }
