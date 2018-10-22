@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using VRTK;
+using VRTK.Examples;
 
 public class GameManager : MonoBehaviour {
 
@@ -13,6 +14,9 @@ public class GameManager : MonoBehaviour {
         MAINMENU,
         PAUSE
     }
+    public eGameState GameState { get; private set; }
+    //For maintain which state the game was in before opening the pause menu
+    public eGameState PreviousGameState { get; private set; }
 
     #region AssetBundleStuff
     private AssetBundle m_realistForestAssetBundle;
@@ -25,10 +29,14 @@ public class GameManager : MonoBehaviour {
     public GameObject m_leftController = null;
     [SerializeField]
     public GameObject m_rightController = null;
-    PlayerInteractions m_playerInteractions = null;
+
+    private VRTK_ControllerEvents m_leftControllerEvents = null;
+    private VRTK_ControllerEvents m_rightControllerEvents = null;
+
+    Controller_Menu m_leftMenu = null;
+    Controller_Menu m_rightMenu = null;
     #endregion
 
-    public eGameState GameState { get; private set; }
 
     // Use this for initialization
     void Start()
@@ -46,7 +54,13 @@ public class GameManager : MonoBehaviour {
         AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
         CleanUpRealisticForestNames();
 
-        m_playerInteractions = FindObjectOfType<PlayerInteractions>();
+        m_leftMenu = m_leftController.GetComponent<Controller_Menu>();
+        m_rightMenu = m_rightController.GetComponent<Controller_Menu>();
+
+        m_leftControllerEvents = m_leftController.GetComponent<VRTK_ControllerEvents>();
+        m_rightControllerEvents = m_rightControllerEvents.GetComponent<VRTK_ControllerEvents>();
+        m_leftControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
+        m_rightControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
     }
 
     private void Update()
@@ -148,8 +162,30 @@ public class GameManager : MonoBehaviour {
                 s = s.Replace('_', ' ');
                 s = s.Replace(".prefab", string.Empty);
             }
-            print(s);
+            //print(s);
             AllRealisticForestSimplifiedNames[i] = s;
+        }
+    }
+
+    private void OpenPauseMenuOnButtonTwoPress(object sender, ControllerInteractionEventArgs e)
+    {
+        //Enable the pause menu and change the game state to pause only if not already paused or not in main menu
+        if(GameState != eGameState.PAUSE && GameState != eGameState.MAINMENU)
+        {
+            PreviousGameState = GameState;
+            GameState = eGameState.PAUSE;
+            m_leftMenu.ForceCloseMenu();
+            m_rightMenu.ForceCloseMenu();
+            //When game pauses probable disable the entire level and open up the GUI
+        }
+    }
+
+    //This will be hooked up to a GUI button
+    public void ClosePauseMenu()
+    {
+        if (GameState == eGameState.PAUSE)
+        {
+            GameState = PreviousGameState;
         }
     }
 }

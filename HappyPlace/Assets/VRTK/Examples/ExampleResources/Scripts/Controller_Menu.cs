@@ -11,12 +11,15 @@
         private bool menuInit = false;
         private bool menuActive = false;
 
+        private GameManager m_gameManager = null; //added by Dakota
+
         private void Start()
         {
             GetComponent<VRTK_ControllerEvents>().ButtonTwoPressed += new ControllerInteractionEventHandler(DoMenuOn);
             GetComponent<VRTK_ControllerEvents>().ButtonTwoReleased += new ControllerInteractionEventHandler(DoMenuOff);
             menuInit = false;
             menuActive = false;
+            m_gameManager = FindObjectOfType<GameManager>(); //added by Dakota
         }
 
         private void InitMenu()
@@ -28,18 +31,33 @@
 
         private void DoMenuOn(object sender, ControllerInteractionEventArgs e)
         {
-            if (!menuInit)
+            if(m_gameManager.GameState == GameManager.eGameState.EDIT)
             {
-                InitMenu();
-            }
-            if (clonedMenuObject != null)
-            {
-                clonedMenuObject.SetActive(true);
-                menuActive = true;
+                if (!menuInit)
+                {
+                    InitMenu();
+                }
+                if (clonedMenuObject != null)
+                {
+                    clonedMenuObject.SetActive(true);
+                    menuActive = true;
+                }
             }
         }
 
         private void DoMenuOff(object sender, ControllerInteractionEventArgs e)
+        {
+            if (m_gameManager.GameState == GameManager.eGameState.EDIT)
+            {
+                if (clonedMenuObject != null)
+                {
+                    clonedMenuObject.SetActive(false);
+                    menuActive = false;
+                }
+            }
+        }
+
+        public void ForceCloseMenu()
         {
             if (clonedMenuObject != null)
             {

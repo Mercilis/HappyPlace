@@ -11,9 +11,7 @@ public class PlayerInteractions : MonoBehaviour {
     private GameObject m_itemSpawner = null;
 
     #region Controllers
-    [SerializeField]
     private GameObject m_leftController = null;
-    [SerializeField]
     private GameObject m_rightController = null;
 
     private VRTK_ControllerEvents m_leftControllerEvents = null;
@@ -59,6 +57,14 @@ public class PlayerInteractions : MonoBehaviour {
     private void CloseObjectSpawningMenu(object sender, ControllerInteractionEventArgs e)
     {
         if (m_itemSpawner != null && m_itemSpawner.activeInHierarchy && m_gameManager.GameState == GameManager.eGameState.EDIT)
+        {
+            m_itemSpawner.SetActive(false);
+        }
+    }
+
+    public void ForceCloseObjectSpawningMenu()
+    {
+        if (m_itemSpawner != null && m_itemSpawner.activeInHierarchy)
         {
             m_itemSpawner.SetActive(false);
         }
