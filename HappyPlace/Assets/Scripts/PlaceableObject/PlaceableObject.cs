@@ -5,11 +5,12 @@ using VRTK;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
-public class PlaceableObject : VRTK_InteractableObject {
+//[RequireComponent(typeof(VRTK_InteractableObject))]
+public class PlaceableObject : MonoBehaviour {
     /// <summary>
     /// The distance at which the object with hover above the ground when it is selected.
     /// </summary>
-    private const int HOVER_HEIGHT = 10;
+    private const int HOVER_HEIGHT = 2;
     //delete later
         ////Fetch the Renderer from the GameObject
         //Renderer rend = GetComponent<Renderer>();
@@ -24,11 +25,15 @@ public class PlaceableObject : VRTK_InteractableObject {
     /// <summary>
     /// Color used for various indicators to indicate the object is invalid.
     /// </summary>
-    private Color RED = new Color(1, 0, 0);
+    private Color COLOR_INVALID = Color.red;
     /// <summary>
     /// Color used for various indicators to indicate the object is valid.
     /// </summary>
-    private Color GREEN = new Color(0, 1, 0);
+    private Color COLOR_VALID = Color.green;
+    /// <summary>
+    /// Color used for various indicators to indicate the object is selected.
+    /// </summary>
+    private Color COLOR_SELECTED = Color.blue;
     /// <summary>
     /// Indicates that the objects position is valid for placing down on the ground. Cannot be placed if this is not true.
     /// </summary>
@@ -37,6 +42,7 @@ public class PlaceableObject : VRTK_InteractableObject {
     /// Indicates that the object is selected by the player and will be able to be moved around, modified, or placed.
     /// </summary>
     public bool IsSelected { get; private set; }
+    public bool IsGrabbed { get; private set; }
     /// <summary>
     /// Collider will be a trigger to determine if it overlaps with other objects, because if it does then it is not a valid placement.
     /// </summary>
@@ -44,51 +50,126 @@ public class PlaceableObject : VRTK_InteractableObject {
     /// <summary>
     /// Will keep track of how many objects are overlapping
     /// </summary>
+    [SerializeField]
     private int m_currentCollisions = 0;
     /// <summary>
-    /// Need a kinematic rigidbody in order for the object to be movable and still check for collisions.
+    /// Need a kinematic rigidbody in order for the object to be movable but not react to physics and still check for collisions.
+    /// Rigidbody also necessary for te VRTK_Interactableoject to work.
     /// </summary>
     private Rigidbody m_rigidbody;
+
+    private VRTK_InteractableObject m_interactableObject;
+
 
     private void Start()
     {
         m_collider = GetComponent<Collider>();
         m_rigidbody = GetComponent<Rigidbody>();
+        m_interactableObject = GetComponent<VRTK_InteractableObject>();
+        SetUpInteractableObjectEventListeners();
+    }
+
+    private void Update()
+    {
+        if(IsGrabbed)
+        {
+            Vector3 pos = transform.position;
+            transform.position = new Vector3(pos.x, HOVER_HEIGHT, pos.z);
+        }
+    }
+
+    /// <summary>
+    /// This method will subscribe all of the PlaceableObjects methods that need to be called when certain events are triggered by the VRTK_InteractableObject
+    /// </summary>
+    private void SetUpInteractableObjectEventListeners()
+    {
+        ///// <summary>
+        ///// Emitted when another object touches the current object.
+        ///// </summary>
+        //public event InteractableObjectEventHandler InteractableObjectTouched;
+        ///// <summary>
+        ///// Emitted when the other object stops touching the current object.
+        ///// </summary>
+        //public event InteractableObjectEventHandler InteractableObjectUntouched;
+        ///// <summary>
+        ///// Emitted when another object grabs the current object (e.g. a controller).
+        ///// </summary>
+        //public event InteractableObjectEventHandler InteractableObjectGrabbed;
+        ///// <summary>
+        ///// Emitted when the other object stops grabbing the current object.
+        ///// </summary>
+        //public event InteractableObjectEventHandler InteractableObjectUngrabbed;
+        m_interactableObject.InteractableObjectTouched += InteractableObjectTouchedListener;
+        m_interactableObject.InteractableObjectUntouched += InteractableObjectUntouchedListener;
+        m_interactableObject.InteractableObjectGrabbed += InteractableObjectGrabbedListener;
+        m_interactableObject.InteractableObjectUngrabbed += InteractableObjectUngrabbedListener;
+    }
+
+    private void InteractableObjectGrabbedListener(object sender, InteractableObjectEventArgs e)
+    {
+        IsGrabbed = true;
+        print("grab listened!");
+        m_interactableObject.touchHighlightColor = COLOR_VALID;
+        m_interactableObject.ToggleHighlight(true);
+        print("placeable object listener turns on highlight");
+    }
+
+    private void InteractableObjectUngrabbedListener(object sender, InteractableObjectEventArgs e)
+    {
+        IsGrabbed = false;
+        m_interactableObject.touchHighlightColor = COLOR_SELECTED;
+        //m_interactableObject.ToggleHighlight(false);
+        Vector3 pos = transform.position;
+        transform.position = new Vector3(pos.x, 0, pos.z);
+    }
+
+    private void InteractableObjectTouchedListener(object sender, InteractableObjectEventArgs e)
+    {
+        m_interactableObject.touchHighlightColor = COLOR_SELECTED;
+    }
+
+    private void InteractableObjectUntouchedListener(object sender, InteractableObjectEventArgs e)
+    {
+
+    }
+
+    private void SetIsSelectedTrue()
+    {
+        IsSelected = true;
+    }
+
+    private void SetIsSelectedFalse()
+    {
+        IsSelected = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         //If another collider collides with this object's, then IsValidPlacement will be set to false
-        IsValidPlacement = false;
-        m_currentCollisions++;
+        if(m_interactableObject != null && IsGrabbed && other.GetComponent<PlaceableObject>() != null)
+        {
+            IsValidPlacement = false;
+            m_currentCollisions++;
+            m_interactableObject.touchHighlightColor = COLOR_INVALID;
+            m_interactableObject.validDrop = VRTK_InteractableObject.ValidDropTypes.NoDrop;
+        }
         //Will need to change any visual indicators to RED
     }
 
     private void OnTriggerExit(Collider other)
     {
         //Check if there are any other objects overlapping other than the one that just left, if there isn't then change IsValidPlacement to true
-        m_currentCollisions--;
-        if(m_currentCollisions <= 0)
+        if(other.GetComponent<PlaceableObject>() != null && m_currentCollisions <= 0)
         {
+            m_currentCollisions--;
             //If IsValidPlacement is changed to true, then will need to change any visual indicators to GREEN
             IsValidPlacement = true;
+            if(m_interactableObject != null && IsGrabbed)
+            {
+                m_interactableObject.touchHighlightColor = COLOR_VALID;
+                m_interactableObject.validDrop = VRTK_InteractableObject.ValidDropTypes.DropAnywhere;
+            }
         }
     }
-
-    public override void StartUsing(VRTK_InteractUse usingObject)
-    {
-        base.StartUsing(usingObject);
-        //spinSpeed = 360f;
-    }
-
-    public override void StopUsing(VRTK_InteractUse usingObject)
-    {
-        base.StopUsing(usingObject);
-        //spinSpeed = 0f;
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-    }
+    
 }

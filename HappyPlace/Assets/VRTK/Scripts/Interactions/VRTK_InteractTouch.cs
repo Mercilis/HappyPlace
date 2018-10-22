@@ -453,9 +453,10 @@ namespace VRTK
                 if (untouchedObjectScript != null)
                 {
                     untouchedObjectScript.StopTouching(this);
-                    if (!untouchedObjectScript.IsTouched())
+                    if (!untouchedObjectScript.IsTouched() && !untouchedObjectScript.IsGrabbed())
                     {
                         untouchedObjectScript.ToggleHighlight(false);
+                        print("touch turns off highlight");
                     }
                 }
             }

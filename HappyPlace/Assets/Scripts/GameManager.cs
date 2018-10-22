@@ -2,8 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using VRTK;
 
 public class GameManager : MonoBehaviour {
+
+    public enum eGameState
+    {
+        EDIT,
+        PLAY,
+        MAINMENU,
+        PAUSE
+    }
 
     #region AssetBundleStuff
     private AssetBundle m_realistForestAssetBundle;
@@ -13,14 +22,19 @@ public class GameManager : MonoBehaviour {
 
     #region PlayerControllers
     [SerializeField]
-    GameObject m_leftController = null;
+    public GameObject m_leftController = null;
     [SerializeField]
-    GameObject m_rightController = null;
+    public GameObject m_rightController = null;
+    PlayerInteractions m_playerInteractions = null;
     #endregion
+
+    public eGameState GameState { get; private set; }
 
     // Use this for initialization
     void Start()
     {
+        GameState = eGameState.EDIT;
+
         var myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
         if (myLoadedAssetBundle == null)
         {
@@ -31,11 +45,13 @@ public class GameManager : MonoBehaviour {
         AllRealisticForestNames = m_realistForestAssetBundle.GetAllAssetNames();
         AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
         CleanUpRealisticForestNames();
+
+        m_playerInteractions = FindObjectOfType<PlayerInteractions>();
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E))
+        if(Input.GetKeyDown(KeyCode.R))
         {
             SpawnTreeTest();
         }
@@ -48,13 +64,29 @@ public class GameManager : MonoBehaviour {
         if(!prefab.GetComponent<Rigidbody>())
         {
             prefab.AddComponent<BoxCollider>();
+
             BoxCollider boxCollider = prefab.GetComponent<BoxCollider>();
             boxCollider.isTrigger = true;
             MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
             boxCollider.center = renderer.bounds.center;
             boxCollider.size = renderer.bounds.size;
-            prefab.AddComponent<Rigidbody>();
-            prefab.GetComponent<Rigidbody>().isKinematic = true;
+
+            Rigidbody body = prefab.AddComponent<Rigidbody>();
+            body.isKinematic = true;
+            //body.useGravity = false;
+            //body.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+
+            VRTK_InteractableObject interactableObject = prefab.AddComponent<VRTK_InteractableObject>();
+            interactableObject.allowedTouchControllers = VRTK_InteractableObject.AllowedController.Both;
+            interactableObject.isGrabbable = true;
+            interactableObject.holdButtonToGrab = false;
+            interactableObject.stayGrabbedOnTeleport = true;
+            interactableObject.holdButtonToUse = false;
+            interactableObject.touchHighlightColor = Color.blue;
+
+            VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter outline = prefab.AddComponent<VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter>();
+            outline.active = true;
+            outline.unhighlightOnDisable = true;
             prefab.AddComponent<PlaceableObject>();
         }
         Instantiate(prefab);
@@ -69,8 +101,13 @@ public class GameManager : MonoBehaviour {
         MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
         boxCollider.center = renderer.bounds.center;
         boxCollider.size = renderer.bounds.size;
+        if(name.Contains("tree"))
+        {
+            boxCollider.size.Scale(new Vector3(0.5f, 0.5f, 1.0f));
+        }
         prefab.AddComponent<Rigidbody>();
         prefab.GetComponent<Rigidbody>().isKinematic = true;
+        //prefab.AddComponent<VRTK.VRTK_InteractUse>();
         prefab.AddComponent<PlaceableObject>();
         Instantiate(prefab);
     }
@@ -111,7 +148,7 @@ public class GameManager : MonoBehaviour {
                 s = s.Replace('_', ' ');
                 s = s.Replace(".prefab", string.Empty);
             }
-            //print(s);
+            print(s);
             AllRealisticForestSimplifiedNames[i] = s;
         }
     }

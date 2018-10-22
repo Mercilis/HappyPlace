@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 175169406
+CRC: 1759706525
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b8700c8f1abb0d218ff8ac1d8dd82733
+    Hash: d293a82cb0ca2f898a9bb9111a58cd59
   TypeTreeHash:
     serializedVersion: 2
     Hash: 0fcab1cefc5783b0cd4c50288031dc95
@@ -39,7 +39,6 @@ Assets:
 - Assets/PolygonNature/Prefabs/Props/SM_Prop_Pillar_01.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Pine_Large_02.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Pine_Large_01.prefab
-- Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Cluster_Large_04.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Round_03.prefab
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_Hedge_Bush_01.prefab
 - Assets/PolygonNature/Prefabs/Props/SM_Prop_Grave_03.prefab
@@ -69,13 +68,10 @@ Assets:
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_Mushrooms_03.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Pine_01.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Stump_03.prefab
-- Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Cluster_Large_05.prefab
-- Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Cluster_Large_03.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Pine_Dead_01.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Pine_Small_01.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Pine_Small_02.prefab
 - Assets/PolygonNature/Prefabs/Props/SM_Prop_TorchStick_01.prefab
-- Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Pile_03.prefab
 - Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Pile_Curved_02.prefab
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_02.prefab
 - Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Pile_Curved_01.prefab
@@ -86,7 +82,6 @@ Assets:
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_PolyPine_Sparse_01.prefab
 - Assets/PolygonNature/Prefabs/Rocks/SM_Rock_02.prefab
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_Bush_Leaves_01.prefab
-- Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Cluster_Large_06.prefab
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_Fern_01.prefab
 - Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Small_01.prefab
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_Fern_03.prefab
@@ -105,7 +100,6 @@ Assets:
 - Assets/PolygonNature/Prefabs/Props/SM_Prop_Fence_02.prefab
 - Assets/PolygonNature/Prefabs/Props/SM_Prop_Pillar_Broken_02.prefab
 - Assets/PolygonNature/Prefabs/Rocks/SM_Rock_03.prefab
-- Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Cluster_Large_01.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Pine_02.prefab
 - Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Small_02.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_PolyPine_02.prefab
@@ -122,7 +116,6 @@ Assets:
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_Fern_Leaves_02.prefab
 - Assets/PolygonNature/Prefabs/Trees/SM_Tree_Round_04.prefab
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_07.prefab
-- Assets/PolygonNature/Prefabs/Rocks/SM_Rock_Cluster_Large_02.prefab
 - Assets/PolygonNature/Prefabs/Props/SM_Prop_Fence_01.prefab
 - Assets/PolygonNature/Prefabs/Plants/SM_Plant_FlowerPatch_01.prefab
 Dependencies: []
