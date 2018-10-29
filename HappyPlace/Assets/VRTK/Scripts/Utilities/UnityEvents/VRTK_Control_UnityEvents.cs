@@ -1,4 +1,5 @@
-﻿namespace VRTK.UnityEventHelper
+﻿
+namespace VRTK.UnityEventHelper
 {
     using UnityEngine;
     using UnityEngine.Events;

@@ -7,6 +7,15 @@ using VRTK;
 [RequireComponent(typeof(Rigidbody))]
 //[RequireComponent(typeof(VRTK_InteractableObject))]
 public class PlaceableObject : MonoBehaviour {
+
+    public enum eObjectState
+    {
+        IN_MENU,
+        IN_WORLD
+    }
+
+    public eObjectState ObjectState { get; private set; }
+
     /// <summary>
     /// The distance at which the object with hover above the ground when it is selected.
     /// </summary>
@@ -59,7 +68,11 @@ public class PlaceableObject : MonoBehaviour {
     private Rigidbody m_rigidbody;
 
     private VRTK_InteractableObject m_interactableObject;
+    public string ObjectName { get; set; }
+    //I don't know how to organize this so the mod for when an object is in the menu will go here
+    public float DistanceMod { get; set; }
 
+    private GameManager m_gameManager = null;
 
     private void Start()
     {
@@ -67,6 +80,7 @@ public class PlaceableObject : MonoBehaviour {
         m_rigidbody = GetComponent<Rigidbody>();
         m_interactableObject = GetComponent<VRTK_InteractableObject>();
         SetUpInteractableObjectEventListeners();
+        m_gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Update()
@@ -99,6 +113,10 @@ public class PlaceableObject : MonoBehaviour {
         ///// Emitted when the other object stops grabbing the current object.
         ///// </summary>
         //public event InteractableObjectEventHandler InteractableObjectUngrabbed;
+        if(m_interactableObject == null)
+        {
+            m_interactableObject = GetComponent<VRTK_InteractableObject>();
+        }
         m_interactableObject.InteractableObjectTouched += InteractableObjectTouchedListener;
         m_interactableObject.InteractableObjectUntouched += InteractableObjectUntouchedListener;
         m_interactableObject.InteractableObjectGrabbed += InteractableObjectGrabbedListener;
@@ -107,20 +125,30 @@ public class PlaceableObject : MonoBehaviour {
 
     private void InteractableObjectGrabbedListener(object sender, InteractableObjectEventArgs e)
     {
-        IsGrabbed = true;
-        print("grab listened!");
-        m_interactableObject.touchHighlightColor = COLOR_VALID;
-        m_interactableObject.ToggleHighlight(true);
-        print("placeable object listener turns on highlight");
+        if(ObjectState == eObjectState.IN_WORLD)
+        {
+            IsGrabbed = true;
+            //print("grab listened!");
+            m_interactableObject.touchHighlightColor = COLOR_VALID;
+            m_interactableObject.ToggleHighlight(true);
+            //print("placeable object listener turns on highlight");
+        }
+        else
+        {
+            
+        }
     }
 
     private void InteractableObjectUngrabbedListener(object sender, InteractableObjectEventArgs e)
     {
-        IsGrabbed = false;
-        m_interactableObject.touchHighlightColor = COLOR_SELECTED;
-        //m_interactableObject.ToggleHighlight(false);
-        Vector3 pos = transform.position;
-        transform.position = new Vector3(pos.x, 0, pos.z);
+        if(ObjectState == eObjectState.IN_WORLD)
+        {
+            IsGrabbed = false;
+            m_interactableObject.touchHighlightColor = COLOR_SELECTED;
+            //m_interactableObject.ToggleHighlight(false);
+            Vector3 pos = transform.position;
+            transform.position = new Vector3(pos.x, 0, pos.z);
+        }
     }
 
     private void InteractableObjectTouchedListener(object sender, InteractableObjectEventArgs e)
@@ -146,7 +174,7 @@ public class PlaceableObject : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         //If another collider collides with this object's, then IsValidPlacement will be set to false
-        if(m_interactableObject != null && IsGrabbed && other.GetComponent<PlaceableObject>() != null)
+        if(ObjectState == eObjectState.IN_WORLD && m_interactableObject != null && IsGrabbed && other.GetComponent<PlaceableObject>() != null)
         {
             IsValidPlacement = false;
             m_currentCollisions++;
@@ -159,7 +187,7 @@ public class PlaceableObject : MonoBehaviour {
     private void OnTriggerExit(Collider other)
     {
         //Check if there are any other objects overlapping other than the one that just left, if there isn't then change IsValidPlacement to true
-        if(other.GetComponent<PlaceableObject>() != null && m_currentCollisions <= 0)
+        if(ObjectState == eObjectState.IN_WORLD && other.GetComponent<PlaceableObject>() != null && m_currentCollisions <= 0)
         {
             m_currentCollisions--;
             //If IsValidPlacement is changed to true, then will need to change any visual indicators to GREEN
