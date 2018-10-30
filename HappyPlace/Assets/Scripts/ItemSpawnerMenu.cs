@@ -26,7 +26,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
     private int m_currentCategoryNum = 0;
 
     private BoxCollider m_displayBounds = null;
-    private float m_baseMenuObjectScale = 0.2f;
+    private float m_baseMenuObjectScale = 0.3f;
     private float m_scaleMod = 0.0f;
 
     private void Start()
@@ -78,15 +78,21 @@ public class ItemSpawnerMenu : MonoBehaviour {
         print(distanceFromBoxCenter);
 
         float scaleMod = Mathf.Clamp(distanceFromBoxCenter, 0.2f, 1);
-        scaleMod = 1 - (m_baseMenuObjectScale * scaleMod);
+        scaleMod = (m_baseMenuObjectScale * scaleMod);
         print("scalemod: " + scaleMod);
         obj.transform.localScale = new Vector3(scaleMod, scaleMod, scaleMod);
 
-        float alphaMod = 1 - Mathf.Clamp(distanceFromBoxCenter, 0, 1);
-        print("alphamod: " + alphaMod);
-        Color color = obj.GetComponent<MeshRenderer>().material.color;
-        color.a = alphaMod;
-        obj.GetComponent<MeshRenderer>().material.color = color;
+        //float alphaMod = Mathf.Clamp(distanceFromBoxCenter, 0, 1);
+        float alphaOff = m_displayBounds.size.x - Mathf.Abs(m_displayBounds.center.x - obj.transform.position.x);
+        if(alphaOff < 0)
+        {
+            List<MeshRenderer> renderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
+            renderers.Add(obj.GetComponent<MeshRenderer>());
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                if(renderers[i] != null) renderers[i].enabled = false;
+            }
+        }
     }
 
     private void OnCategoryClicked(Button button)
@@ -105,8 +111,8 @@ public class ItemSpawnerMenu : MonoBehaviour {
                 GameObject obj = m_objects[categoryNum][i];
                 float xMod = (i % 2 == 0 ? distanceMod : (-1 * distanceMod));
                 Transform objTrans = obj.transform;
+                objTrans.SetParent(m_worldObjectDisplay.transform, true);
                 objTrans.gameObject.SetActive(true);
-                objTrans.SetParent(m_worldObjectDisplay.transform, false);
                 objTrans.position = new Vector3((i % 2 == 0 ? distanceMod : (-1 * distanceMod)), objTrans.position.y + 0.5f, objTrans.position.z);
                 objTrans.localScale = new Vector3(m_baseMenuObjectScale, m_baseMenuObjectScale, m_baseMenuObjectScale);
                 objTrans.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += CreateAndReplaceObject;
@@ -114,6 +120,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
                 CalculateObjectsVisibility(obj);
                 distanceMod += 0.5f;
             }
+            m_worldObjectDisplay.transform.SetParent(transform, false);
         }
     }
     
@@ -149,9 +156,15 @@ public class ItemSpawnerMenu : MonoBehaviour {
                 obj.SetParent(m_mainObjectContainer.transform, false);
                 obj.position = Vector3.zero;
             }
+            m_worldObjectDisplay.transform.SetParent(null, true);
         }
 
         m_backCanvas.gameObject.SetActive(false);
         m_categoryCanvas.gameObject.SetActive(true);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        CalculateObjectsVisibility(other.gameObject);
     }
 }
