@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour {
     public List<GameObject>[] ObjectsSortedByCategory;
     [SerializeField]
     private GameObject m_MainObjectStorage = null;
+    [SerializeField]
+    private GameObject m_pauseMenu = null;
 
     #region AssetBundleStuff
     private AssetBundle m_realistForestAssetBundle;
@@ -235,7 +237,11 @@ public class GameManager : MonoBehaviour {
             GameState = eGameState.PAUSE;
             m_leftMenu.ForceCloseMenu();
             m_rightMenu.ForceCloseMenu();
+            m_pauseMenu.SetActive(true);
             //When game pauses probable disable the entire level and open up the GUI
+        } else if(GameState == eGameState.PAUSE)
+        {
+            ClosePauseMenu();
         }
     }
 
@@ -245,6 +251,7 @@ public class GameManager : MonoBehaviour {
         if (GameState == eGameState.PAUSE)
         {
             GameState = PreviousGameState;
+            m_pauseMenu.SetActive(false);
         }
     }
 }
