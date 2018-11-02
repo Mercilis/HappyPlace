@@ -65,7 +65,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private void Update()
     {
-        if(m_lever.GetValue() > m_valueThresholdForMovement && Mathf.Abs(m_displayDisplacement) <= m_maxDistanceForDisplay)
+        if(Mathf.Abs(m_lever.GetValue()) > m_valueThresholdForMovement && Mathf.Abs(m_displayDisplacement) <= m_maxDistanceForDisplay)
         {
             //Move the menu
             Vector3 pos = m_worldObjectDisplay.transform.position;

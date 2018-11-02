@@ -1,7 +1,10 @@
 ManifestFileVersion: 0
-CRC: 891915450
+CRC: 1627412227
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: realisticforest
+      Dependencies: {}
+    Info_1:
+      Name: julianray
       Dependencies: {}

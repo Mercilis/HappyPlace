@@ -67,13 +67,13 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        var myLoadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
-        if (myLoadedAssetBundle == null)
+        var loadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
+        if (loadedAssetBundle == null)
         {
             Debug.Log("Failed to load AssetBundle realisticforest!");
             return;
         }
-        m_realistForestAssetBundle = myLoadedAssetBundle;
+        m_realistForestAssetBundle = loadedAssetBundle;
         AllRealisticForestNames = m_realistForestAssetBundle.GetAllAssetNames();
         AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
         CleanUpRealisticForestNamesAndMakeObjects();

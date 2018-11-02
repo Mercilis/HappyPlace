@@ -1,0 +1,25 @@
+ManifestFileVersion: 0
+CRC: 3172829367
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b200ee46daeeead7e7ca2ccc6fe5c76d
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 06 Sailing Away.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 08 Strawberry Moon.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 01 Stargazing.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 10 Jazzy Xmas.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 02 Only Love.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 05 Hardwired Love.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 03 Life.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 09 Flying Imagination.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 07 La Promenade Sentimentale.wav
+- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 04 Melodia Del Mar.wav
+Dependencies: []
