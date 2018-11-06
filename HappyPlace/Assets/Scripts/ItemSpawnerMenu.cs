@@ -48,15 +48,13 @@ public class ItemSpawnerMenu : MonoBehaviour {
         if(m_categoryCanvas != null && m_buttonTemplate != null)
         {
             m_objects = m_gameManager.ObjectsSortedByCategory;
-            //for (int i = 0; i < m_gameManager.CurrentEnvironmentCategories.Length; i++)
-            //{
-            //    print(m_gameManager.CurrentEnvironmentCategories[i]);
-            //}
+            print("category canvas and button template not null");
             for (int i = 0; i < m_objects.Length; i++)
             {
                 GameObject obj = Instantiate(m_buttonTemplate, m_categoryCanvas.transform);
                 Button newButton = obj.GetComponent<Button>();
                 obj.GetComponentInChildren<TextMeshProUGUI>().text = m_gameManager.CurrentEnvironmentCategories[i];
+                print(m_gameManager.CurrentEnvironmentCategories[i] + " button created");
                 newButton.onClick.AddListener(delegate { OnCategoryClicked(newButton); });
                 m_menuButtons.Add(newButton);
             }
@@ -122,6 +120,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private void OnCategoryClicked(Button button)
     {
+        print(button.GetComponentInChildren<TextMeshProUGUI>().text + " category clicked");
         m_categoryCanvas.gameObject.SetActive(false);
         m_backCanvas.gameObject.SetActive(true);
         int categoryNum = m_menuButtons.IndexOf(button);

@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour {
     private GameObject m_MainObjectStorage = null;
     [SerializeField]
     private GameObject m_pauseMenu = null;
+    [SerializeField]
+    private GameObject m_musicMenu = null;
+
+    public AudioSource AudioPlayer { get; private set; }
 
     #region AssetBundleStuff
     private AssetBundle m_realistForestAssetBundle;
@@ -84,11 +88,16 @@ public class GameManager : MonoBehaviour {
     {
         m_leftMenu = m_leftController.GetComponent<Controller_Menu>();
         m_rightMenu = m_rightController.GetComponent<Controller_Menu>();
+        AudioPlayer = GetComponent<AudioSource>();
 
         m_leftControllerEvents = m_leftController.GetComponent<VRTK_ControllerEvents>();
         m_rightControllerEvents = m_rightController.GetComponent<VRTK_ControllerEvents>();
         m_leftControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
         m_rightControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
+
+        //starts enabled to load stuff in
+        m_musicMenu.SetActive(false);
+        m_pauseMenu.SetActive(false);
     }
 
     private void Update()
@@ -253,5 +262,17 @@ public class GameManager : MonoBehaviour {
             GameState = PreviousGameState;
             m_pauseMenu.SetActive(false);
         }
+    }
+
+    public void OpenMusicMenu()
+    {
+        m_musicMenu.SetActive(true);
+        m_pauseMenu.SetActive(false);
+    }
+
+    public void CloseMusicMenu()
+    {
+        m_pauseMenu.SetActive(true);
+        m_musicMenu.SetActive(false);
     }
 }
