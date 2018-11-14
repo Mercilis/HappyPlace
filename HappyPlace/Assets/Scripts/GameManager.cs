@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour {
     private GameObject m_musicMenu = null;
 
     public AudioSource AudioPlayer { get; private set; }
+    
+    public float GLOBAL_FLOOR_HEIGHT { get; private set; }
 
     #region AssetBundleStuff
     private AssetBundle m_realistForestAssetBundle;
@@ -58,6 +60,7 @@ public class GameManager : MonoBehaviour {
 
     private void Awake()
     {
+        GLOBAL_FLOOR_HEIGHT = -1.0f;
         GameState = eGameState.EDIT;
         CurrentEnvironment = eEnvironmentType.REALISTIC_FOREST;
 
@@ -81,11 +84,7 @@ public class GameManager : MonoBehaviour {
         AllRealisticForestNames = m_realistForestAssetBundle.GetAllAssetNames();
         AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
         CleanUpRealisticForestNamesAndMakeObjects();
-    }
 
-    // Use this for initialization
-    void Start()
-    {
         m_leftMenu = m_leftController.GetComponent<Controller_Menu>();
         m_rightMenu = m_rightController.GetComponent<Controller_Menu>();
         AudioPlayer = GetComponent<AudioSource>();
@@ -94,7 +93,11 @@ public class GameManager : MonoBehaviour {
         m_rightControllerEvents = m_rightController.GetComponent<VRTK_ControllerEvents>();
         m_leftControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
         m_rightControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
+    }
 
+    // Use this for initialization
+    void Start()
+    {
         //starts enabled to load stuff in
         m_musicMenu.SetActive(false);
         m_pauseMenu.SetActive(false);

@@ -81,6 +81,7 @@ public class PlaceableObject : MonoBehaviour {
         m_interactableObject = GetComponent<VRTK_InteractableObject>();
         SetUpInteractableObjectEventListeners();
         m_gameManager = FindObjectOfType<GameManager>();
+        ObjectState = eObjectState.IN_MENU;
     }
 
     private void Update()
@@ -135,7 +136,7 @@ public class PlaceableObject : MonoBehaviour {
         }
         else
         {
-            
+            ObjectState = eObjectState.IN_WORLD;
         }
     }
 
@@ -147,7 +148,7 @@ public class PlaceableObject : MonoBehaviour {
             m_interactableObject.touchHighlightColor = COLOR_SELECTED;
             //m_interactableObject.ToggleHighlight(false);
             Vector3 pos = transform.position;
-            transform.position = new Vector3(pos.x, 0, pos.z);
+            transform.position = new Vector3(pos.x, m_gameManager.GLOBAL_FLOOR_HEIGHT, pos.z);
         }
     }
 

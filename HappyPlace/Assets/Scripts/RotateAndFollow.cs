@@ -8,6 +8,8 @@ public class RotateAndFollow : MonoBehaviour {
     [SerializeField] private float m_MaxYRotation = 20f;    // The maximum amount the transform can rotate around the y axis.
     [SerializeField] private float m_MinYRotation = -20f;   // The maximum amount the transform can rotate around the y axis in the opposite direction.
     [SerializeField] private GameObject m_targetToFollow = null;
+    [SerializeField] private float m_desiredDistanceX = 2.0f;
+    [SerializeField] private float m_desiredDistanceY = 0.0f;
 
     private Vector3 m_desiredPosition = Vector3.zero;
     private float m_hoverHeight = 1.69f;
@@ -42,7 +44,7 @@ public class RotateAndFollow : MonoBehaviour {
         transform.LookAt(m_targetToFollow.transform.position, Vector3.up);
         transform.Rotate(new Vector3(30, 180, 0));
 
-        m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * 2);
+        m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * m_desiredDistanceX) + (Vector3.up * m_desiredDistanceY);
         if (m_desiredPosition != transform.position)
         {
             //sprint("lerping position");
