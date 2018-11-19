@@ -4,6 +4,8 @@ using System.IO;
 using UnityEngine;
 using VRTK;
 using VRTK.Examples;
+using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -34,12 +36,20 @@ public class GameManager : MonoBehaviour {
     private GameObject m_pauseMenu = null;
     [SerializeField]
     private GameObject m_musicMenu = null;
+    [SerializeField]
+    private GameObject m_loadingScreenVisual = null;
+    [SerializeField]
+    private GameObject m_mainMenu = null;
+
+    public GameObject PlaceObjectStorage = null;
 
     public AudioSource AudioPlayer { get; private set; }
+    private SceneLoader m_sceneLoader = null;
     
     public float GLOBAL_FLOOR_HEIGHT { get; private set; }
 
     #region AssetBundleStuff
+    private LoadRealisticForest m_realisticForestLoader = null;
     private AssetBundle m_realistForestAssetBundle;
     public string[] AllRealisticForestNames { get; private set; }
     public string[] AllRealisticForestSimplifiedNames { get; private set; }
@@ -61,7 +71,8 @@ public class GameManager : MonoBehaviour {
     private void Awake()
     {
         GLOBAL_FLOOR_HEIGHT = -1.0f;
-        GameState = eGameState.EDIT;
+        GameState = eGameState.MAINMENU;
+        PreviousGameState = GameState;
         CurrentEnvironment = eEnvironmentType.REALISTIC_FOREST;
 
         if (CurrentEnvironment == eEnvironmentType.REALISTIC_FOREST)
@@ -74,17 +85,6 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        var loadedAssetBundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
-        if (loadedAssetBundle == null)
-        {
-            Debug.Log("Failed to load AssetBundle realisticforest!");
-            return;
-        }
-        m_realistForestAssetBundle = loadedAssetBundle;
-        AllRealisticForestNames = m_realistForestAssetBundle.GetAllAssetNames();
-        AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
-        CleanUpRealisticForestNamesAndMakeObjects();
-
         m_leftMenu = m_leftController.GetComponent<Controller_Menu>();
         m_rightMenu = m_rightController.GetComponent<Controller_Menu>();
         AudioPlayer = GetComponent<AudioSource>();
@@ -93,91 +93,45 @@ public class GameManager : MonoBehaviour {
         m_rightControllerEvents = m_rightController.GetComponent<VRTK_ControllerEvents>();
         m_leftControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
         m_rightControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
+
+        m_sceneLoader = GetComponent<SceneLoader>();
     }
 
-    // Use this for initialization
-    void Start()
+    private void Start()
     {
-        //starts enabled to load stuff in
-        m_musicMenu.SetActive(false);
-        m_pauseMenu.SetActive(false);
+        m_sceneLoader.SetLoadingText(m_loadingScreenVisual.GetComponentInChildren<TextMeshProUGUI>());
+
+        //GameObject mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
+        //Button playButton = mainMenu.GetComponentInChildren<Button>();
+        //playButton.onClick.AddListener(delegate { LoadRealisticForestScene(); });
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Y))
-        {
-            SpawnTreeTest();
-        }
+       
     }
 
-    private void SpawnTreeTest()
+    #region LoadRealisticForest
+    public void LoadRealisticForestScene()
     {
-        
-        GameObject prefab = m_realistForestAssetBundle.LoadAsset<GameObject>(AllRealisticForestNames[(int)(Random.value * AllRealisticForestNames.Length)]);
-        if(!prefab.GetComponent<Rigidbody>())
-        {
-            prefab.AddComponent<BoxCollider>();
-
-            BoxCollider boxCollider = prefab.GetComponent<BoxCollider>();
-            boxCollider.isTrigger = true;
-            MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
-            boxCollider.center = renderer.bounds.center;
-            boxCollider.size = renderer.bounds.size;
-
-            Rigidbody body = prefab.AddComponent<Rigidbody>();
-            body.isKinematic = true;
-            //body.useGravity = false;
-            //body.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
-
-            VRTK_InteractableObject interactableObject = prefab.AddComponent<VRTK_InteractableObject>();
-            interactableObject.allowedTouchControllers = VRTK_InteractableObject.AllowedController.Both;
-            interactableObject.isGrabbable = true;
-            interactableObject.holdButtonToGrab = false;
-            interactableObject.stayGrabbedOnTeleport = true;
-            interactableObject.holdButtonToUse = false;
-            interactableObject.touchHighlightColor = Color.blue;
-
-            VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter outline = prefab.AddComponent<VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter>();
-            outline.active = true;
-            outline.unhighlightOnDisable = true;
-            prefab.AddComponent<PlaceableObject>();
-        }
-        Instantiate(prefab);
+        m_loadingScreenVisual.SetActive(true);
+        StartCoroutine(m_sceneLoader.LoadSceneByName("RealisticForest"));
+        m_mainMenu.SetActive(false);
+        print("Load realistic forest scene called");
     }
 
-    public GameObject SpawnItemByName(string name)
+    public void FinalizeLoadingRealisticForest()
     {
-        GameObject prefab = m_realistForestAssetBundle.LoadAsset<GameObject>(name);
-        if (!prefab.GetComponent<Rigidbody>())
-        {
-            prefab.AddComponent<BoxCollider>();
-
-            BoxCollider boxCollider = prefab.GetComponent<BoxCollider>();
-            boxCollider.isTrigger = true;
-            MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
-            boxCollider.center = renderer.bounds.center;
-            boxCollider.size = renderer.bounds.size;
-
-            Rigidbody body = prefab.AddComponent<Rigidbody>();
-            body.isKinematic = true;
-            //body.useGravity = false;
-            //body.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
-
-            VRTK_InteractableObject interactableObject = prefab.AddComponent<VRTK_InteractableObject>();
-            interactableObject.allowedTouchControllers = VRTK_InteractableObject.AllowedController.Both;
-            interactableObject.isGrabbable = true;
-            interactableObject.holdButtonToGrab = false;
-            interactableObject.stayGrabbedOnTeleport = true;
-            interactableObject.holdButtonToUse = false;
-            interactableObject.touchHighlightColor = Color.blue;
-
-            VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter outline = prefab.AddComponent<VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter>();
-            outline.active = true;
-            outline.unhighlightOnDisable = true;
-            prefab.AddComponent<PlaceableObject>().ObjectName = name;
-        }
-        return Instantiate(prefab, Vector3.zero, Quaternion.identity, m_MainObjectStorage.transform);
+        //FindAndSavePauseMenu();
+        //FindAndSaveMusicMenu();
+        PreviousGameState = GameState;
+        GameState = eGameState.EDIT;
+        m_loadingScreenVisual.SetActive(false);
+        m_sceneLoader.m_loadScene = false;
+        m_realistForestAssetBundle = m_realisticForestLoader.RealistForestAssetBundle;
+        AllRealisticForestNames = m_realisticForestLoader.AllRealisticForestNames;
+        AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
+        CleanUpRealisticForestNamesAndMakeObjects();
     }
 
     private void CleanUpRealisticForestNamesAndMakeObjects()
@@ -231,12 +185,96 @@ public class GameManager : MonoBehaviour {
             AllRealisticForestSimplifiedNames[i] = s;
         }
     }
+    #endregion
 
-    private void MakeRealisticForestObjectsSorted()
+    public GameObject SpawnItemByName(string name)
     {
-        for (int i = 0; i < AllRealisticForestNames.Length; i++)
+        GameObject prefab = m_realistForestAssetBundle.LoadAsset<GameObject>(name);
+        if (!prefab.GetComponent<Rigidbody>())
         {
+            prefab.AddComponent<BoxCollider>();
 
+            BoxCollider boxCollider = prefab.GetComponent<BoxCollider>();
+            boxCollider.isTrigger = true;
+            MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
+            boxCollider.center = renderer.bounds.center;
+            boxCollider.size = renderer.bounds.size;
+
+            Rigidbody body = prefab.AddComponent<Rigidbody>();
+            body.isKinematic = true;
+            //body.useGravity = false;
+            //body.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+
+            VRTK_InteractableObject interactableObject = prefab.AddComponent<VRTK_InteractableObject>();
+            interactableObject.allowedTouchControllers = VRTK_InteractableObject.AllowedController.Both;
+            interactableObject.isGrabbable = true;
+            interactableObject.holdButtonToGrab = false;
+            interactableObject.stayGrabbedOnTeleport = true;
+            interactableObject.holdButtonToUse = false;
+            interactableObject.touchHighlightColor = Color.blue;
+
+            VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter outline = prefab.AddComponent<VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter>();
+            outline.active = true;
+            outline.unhighlightOnDisable = true;
+            prefab.AddComponent<PlaceableObject>().ObjectName = name;
+        }
+        return Instantiate(prefab, Vector3.zero, Quaternion.identity, m_MainObjectStorage.transform);
+    }
+
+
+    #region SavingAndLoading
+    public SpaceData CreateSaveData()
+    {
+        SpaceData spaceData = new SpaceData();
+        PlaceableObject[] objects = PlaceObjectStorage.GetComponentsInChildren<PlaceableObject>();
+        spaceData.m_objectsInSpace = new ObjectData[objects.Length];
+
+        for (int i = 0; i < objects.Length; i++)
+        {
+            ObjectData objData = new ObjectData();
+
+            objData.AssetBundleName = objects[i].ObjectName;
+            objData.TransformLocation = objects[i].transform.position;
+            objData.TransformRotation = objects[i].transform.rotation;
+
+            spaceData.m_objectsInSpace[i] = objData;
+        }
+
+        spaceData.m_musicAssetBundle = "julianray";
+        spaceData.m_currentSongInSpaceName = FindObjectOfType<MusicManager>().GetCurrentSongName();
+
+        return spaceData;
+    }
+
+    public void SaveGame()
+    {
+        SpaceData spaceData = CreateSaveData();
+
+
+    }
+
+    public void LoadGame()
+    {
+
+    }
+    #endregion
+
+    #region MenuFunctions
+    public void FindAndSavePauseMenu()
+    {
+        m_pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu");
+        if (m_pauseMenu != null && m_pauseMenu.activeInHierarchy)
+        {
+            m_pauseMenu.SetActive(false);
+        }
+    }
+
+    public void FindAndSaveMusicMenu()
+    {
+        m_musicMenu = GameObject.FindGameObjectWithTag("MusicMenu");
+        if (m_musicMenu != null && m_musicMenu.activeInHierarchy)
+        {
+            m_musicMenu.SetActive(false);
         }
     }
 
@@ -278,4 +316,5 @@ public class GameManager : MonoBehaviour {
         m_pauseMenu.SetActive(true);
         m_musicMenu.SetActive(false);
     }
+    #endregion
 }

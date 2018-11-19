@@ -17,39 +17,56 @@ public class RotateAndFollow : MonoBehaviour {
 
     private void Start()
     {
-        m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * 5);
-        transform.position = m_desiredPosition;
+        m_targetToFollow = GameObject.FindGameObjectWithTag("CameraRig");
+        if(m_targetToFollow)
+        {
+            print("found camera rig");
+            m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * 5);
+            transform.position = m_desiredPosition;
+        }
     }
 
     private void Update()
     {
-        // Store the Euler rotation of the gameobject.
-        var eulerRotation = transform.rotation.eulerAngles;
-
-        // Set the rotation to be the same as the user's in the y axis.
-        eulerRotation.x = 0;
-        eulerRotation.z = 0;
-        eulerRotation.y = UnityEngine.XR.InputTracking.GetLocalRotation(UnityEngine.XR.XRNode.Head).eulerAngles.y;
-
-        // Add 360 to the rotation so that it can effectively be clamped.
-        if (eulerRotation.y < 270)
-            eulerRotation.y += 360;
-
-        // Clamp the rotation between the minimum and maximum.
-        eulerRotation.y = Mathf.Clamp(eulerRotation.y, 360 + m_MinYRotation, 360 + m_MaxYRotation);
-
-        // Smoothly damp the rotation towards the newly calculated rotation.
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(eulerRotation),
-            m_Damping * (1 - Mathf.Exp(k_ExpDampCoef * Time.deltaTime)));
-        transform.LookAt(m_targetToFollow.transform.position, Vector3.up);
-        transform.Rotate(new Vector3(30, 180, 0));
-
-        m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * m_desiredDistanceX) + (Vector3.up * m_desiredDistanceY);
-        if (m_desiredPosition != transform.position)
+        if (m_targetToFollow)
         {
-            //sprint("lerping position");
-            Vector3 targetpos = new Vector3(m_desiredPosition.x, m_hoverHeight, m_desiredPosition.z);
-            transform.position = Vector3.Lerp(transform.position, targetpos, m_Damping * (1 - Mathf.Exp(k_ExpDampCoef * Time.deltaTime)));
+            // Store the Euler rotation of the gameobject.
+            var eulerRotation = transform.rotation.eulerAngles;
+
+            // Set the rotation to be the same as the user's in the y axis.
+            eulerRotation.x = 0;
+            eulerRotation.z = 0;
+            eulerRotation.y = UnityEngine.XR.InputTracking.GetLocalRotation(UnityEngine.XR.XRNode.Head).eulerAngles.y;
+
+            // Add 360 to the rotation so that it can effectively be clamped.
+            if (eulerRotation.y < 270)
+                eulerRotation.y += 360;
+
+            // Clamp the rotation between the minimum and maximum.
+            eulerRotation.y = Mathf.Clamp(eulerRotation.y, 360 + m_MinYRotation, 360 + m_MaxYRotation);
+
+            // Smoothly damp the rotation towards the newly calculated rotation.
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(eulerRotation),
+                m_Damping * (1 - Mathf.Exp(k_ExpDampCoef * Time.deltaTime)));
+            transform.LookAt(m_targetToFollow.transform.position, Vector3.up);
+            transform.Rotate(new Vector3(30, 180, 0));
+
+            m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * m_desiredDistanceX) + (Vector3.up * m_desiredDistanceY);
+            if (m_desiredPosition != transform.position)
+            {
+                //sprint("lerping position");
+                Vector3 targetpos = new Vector3(m_desiredPosition.x, m_hoverHeight, m_desiredPosition.z);
+                transform.position = Vector3.Lerp(transform.position, targetpos, m_Damping * (1 - Mathf.Exp(k_ExpDampCoef * Time.deltaTime)));
+            }
+        } else
+        {
+            m_targetToFollow = GameObject.FindGameObjectWithTag("CameraRig");
+            if (m_targetToFollow)
+            {
+                print("found camera rig");
+                m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * 5);
+                transform.position = m_desiredPosition;
+            }
         }
     }
 }
