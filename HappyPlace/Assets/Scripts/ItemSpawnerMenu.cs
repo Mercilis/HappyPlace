@@ -16,9 +16,9 @@ public class ItemSpawnerMenu : MonoBehaviour {
     [SerializeField]
     private GameObject m_mainObjectContainer = null;
     [SerializeField]
-    private Canvas m_categoryCanvas;
+    private Canvas m_categoryCanvas = null;
     [SerializeField]
-    private Canvas m_backCanvas;
+    private Canvas m_backCanvas = null;
 
     private List<Button> m_menuButtons = new List<Button>();
     private List<GameObject>[] m_objects;
@@ -26,7 +26,6 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private int m_currentCategoryNum = 0;
     private float m_baseMenuObjectScale = 0.3f;
-    private float m_scaleMod = 0.0f;
 
     private BoxCollider m_displayBounds = null;
     private GameManager m_gameManager = null;
@@ -168,11 +167,11 @@ public class ItemSpawnerMenu : MonoBehaviour {
         GameObject newObj = Instantiate(obj, m_worldObjectDisplay.transform, false);
         Transform objTrans = newObj.transform;
         objTrans.gameObject.SetActive(true);
-        objTrans.position = new Vector3(distanceMod, obj.transform.position.y, obj.transform.position.z);
         objTrans.SetParent(m_worldObjectDisplay.transform, false);
+        objTrans.position = new Vector3(distanceMod, obj.transform.position.y, obj.transform.position.z);
         objTrans.localScale = new Vector3(m_baseMenuObjectScale, m_baseMenuObjectScale, m_baseMenuObjectScale);
-        obj.transform.SetParent(null);
-        //objTrans.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += CreateAndReplaceObject;
+        obj.transform.SetParent(m_gameManager.PlaceObjectStorage.transform);
+        objTrans.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += CreateAndReplaceObject;
     }
 
     private void CreateAndReplaceObject(object sender, InteractableObjectEventArgs e)
@@ -205,7 +204,8 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<PlaceableObject>() != null)
+        PlaceableObject obj = other.GetComponent<PlaceableObject>();
+        if (obj != null && obj.ObjectState == PlaceableObject.eObjectState.IN_MENU)
         {
             CalculateObjectsVisibility(other.gameObject);
             //add to a list of gameobjects to update
@@ -216,7 +216,8 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private void OnTriggerExit(Collider other)
     {
-        if(other.GetComponent<PlaceableObject>() != null)
+        PlaceableObject obj = other.GetComponent<PlaceableObject>();
+        if (obj != null && obj.ObjectState == PlaceableObject.eObjectState.IN_MENU)
         {
             if(m_activeMenuObjects.Contains(other.gameObject))
             {

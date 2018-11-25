@@ -126,18 +126,16 @@ public class PlaceableObject : MonoBehaviour {
 
     private void InteractableObjectGrabbedListener(object sender, InteractableObjectEventArgs e)
     {
-        if(ObjectState == eObjectState.IN_WORLD)
-        {
-            IsGrabbed = true;
-            //print("grab listened!");
-            m_interactableObject.touchHighlightColor = COLOR_VALID;
-            m_interactableObject.ToggleHighlight(true);
-            //print("placeable object listener turns on highlight");
-        }
-        else
+        if (ObjectState == eObjectState.IN_MENU)
         {
             ObjectState = eObjectState.IN_WORLD;
         }
+
+        IsGrabbed = true;
+        //print("grab listened!");
+        m_interactableObject.touchHighlightColor = COLOR_VALID;
+        m_interactableObject.ToggleHighlight(true);
+        //print("placeable object listener turns on highlight");
     }
 
     private void InteractableObjectUngrabbedListener(object sender, InteractableObjectEventArgs e)
@@ -175,30 +173,30 @@ public class PlaceableObject : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         //If another collider collides with this object's, then IsValidPlacement will be set to false
-        if(ObjectState == eObjectState.IN_WORLD && m_interactableObject != null && IsGrabbed && other.GetComponent<PlaceableObject>() != null)
-        {
-            IsValidPlacement = false;
-            m_currentCollisions++;
-            m_interactableObject.touchHighlightColor = COLOR_INVALID;
-            m_interactableObject.validDrop = VRTK_InteractableObject.ValidDropTypes.NoDrop;
-        }
+        //if(ObjectState == eObjectState.IN_WORLD && m_interactableObject != null && IsGrabbed && other.GetComponent<PlaceableObject>() != null)
+        //{
+        //    IsValidPlacement = false;
+        //    m_currentCollisions++;
+        //    m_interactableObject.touchHighlightColor = COLOR_INVALID;
+        //    m_interactableObject.validDrop = VRTK_InteractableObject.ValidDropTypes.NoDrop;
+        //}
         //Will need to change any visual indicators to RED
     }
 
     private void OnTriggerExit(Collider other)
     {
         //Check if there are any other objects overlapping other than the one that just left, if there isn't then change IsValidPlacement to true
-        if(ObjectState == eObjectState.IN_WORLD && other.GetComponent<PlaceableObject>() != null && m_currentCollisions <= 0)
-        {
-            m_currentCollisions--;
-            //If IsValidPlacement is changed to true, then will need to change any visual indicators to GREEN
-            IsValidPlacement = true;
-            if(m_interactableObject != null && IsGrabbed)
-            {
-                m_interactableObject.touchHighlightColor = COLOR_VALID;
-                m_interactableObject.validDrop = VRTK_InteractableObject.ValidDropTypes.DropAnywhere;
-            }
-        }
+        //if(ObjectState == eObjectState.IN_WORLD && other.GetComponent<PlaceableObject>() != null && m_currentCollisions <= 0)
+        //{
+        //    m_currentCollisions--;
+        //    //If IsValidPlacement is changed to true, then will need to change any visual indicators to GREEN
+        //    IsValidPlacement = true;
+        //    if(m_interactableObject != null && IsGrabbed)
+        //    {
+        //        m_interactableObject.touchHighlightColor = COLOR_VALID;
+        //        m_interactableObject.validDrop = VRTK_InteractableObject.ValidDropTypes.DropAnywhere;
+        //    }
+        //}
     }
     
 }

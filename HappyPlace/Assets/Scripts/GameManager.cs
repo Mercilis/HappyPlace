@@ -49,10 +49,16 @@ public class GameManager : MonoBehaviour {
     public float GLOBAL_FLOOR_HEIGHT { get; private set; }
 
     #region AssetBundleStuff
+    //Realistic Forest Asset Bundle
     private LoadRealisticForest m_realisticForestLoader = null;
-    private AssetBundle m_realistForestAssetBundle;
+    public AssetBundle RealistForestAssetBundle { get; private set; }
     public string[] AllRealisticForestNames { get; private set; }
     public string[] AllRealisticForestSimplifiedNames { get; private set; }
+
+    //Julian Ray Asset Bundle
+    private MusicManager m_musicManager = null;
+    public AssetBundle JulianRayAssetBundle { get; private set; }
+    public string[] AllJulianRayAssetNames { get; private set; }
     #endregion
 
     #region PlayerControllers
@@ -64,12 +70,18 @@ public class GameManager : MonoBehaviour {
     private VRTK_ControllerEvents m_leftControllerEvents = null;
     private VRTK_ControllerEvents m_rightControllerEvents = null;
 
-    Controller_Menu m_leftMenu = null;
-    Controller_Menu m_rightMenu = null;
+    //Controller_Menu m_leftMenu = null;
+    //Controller_Menu m_rightMenu = null;
     #endregion
 
     private void Awake()
     {
+        if (FindObjectsOfType<GameManager>().Length > 1)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+
         GLOBAL_FLOOR_HEIGHT = -1.0f;
         GameState = eGameState.MAINMENU;
         PreviousGameState = GameState;
@@ -85,8 +97,8 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        m_leftMenu = m_leftController.GetComponent<Controller_Menu>();
-        m_rightMenu = m_rightController.GetComponent<Controller_Menu>();
+        //m_leftMenu = m_leftController.GetComponent<Controller_Menu>();
+        //m_rightMenu = m_rightController.GetComponent<Controller_Menu>();
         AudioPlayer = GetComponent<AudioSource>();
 
         m_leftControllerEvents = m_leftController.GetComponent<VRTK_ControllerEvents>();
@@ -100,7 +112,7 @@ public class GameManager : MonoBehaviour {
     private void Start()
     {
         m_sceneLoader.SetLoadingText(m_loadingScreenVisual.GetComponentInChildren<TextMeshProUGUI>());
-
+        FindAndSavePauseMenu();
         //GameObject mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
         //Button playButton = mainMenu.GetComponentInChildren<Button>();
         //playButton.onClick.AddListener(delegate { LoadRealisticForestScene(); });
@@ -128,7 +140,8 @@ public class GameManager : MonoBehaviour {
         GameState = eGameState.EDIT;
         m_loadingScreenVisual.SetActive(false);
         m_sceneLoader.m_loadScene = false;
-        m_realistForestAssetBundle = m_realisticForestLoader.RealistForestAssetBundle;
+        m_realisticForestLoader = FindObjectOfType<LoadRealisticForest>();
+        RealistForestAssetBundle = m_realisticForestLoader.RealistForestAssetBundle;
         AllRealisticForestNames = m_realisticForestLoader.AllRealisticForestNames;
         AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
         CleanUpRealisticForestNamesAndMakeObjects();
@@ -187,9 +200,16 @@ public class GameManager : MonoBehaviour {
     }
     #endregion
 
+    public void FinalizeLoadingJulianRayMusic()
+    {
+        JulianRayAssetBundle = m_musicManager.JulianRayAssetBundle;
+        AllJulianRayAssetNames = m_musicManager.JulianRayAssetNames;
+        FindAndSaveMusicMenu();
+    }
+
     public GameObject SpawnItemByName(string name)
     {
-        GameObject prefab = m_realistForestAssetBundle.LoadAsset<GameObject>(name);
+        GameObject prefab = RealistForestAssetBundle.LoadAsset<GameObject>(name);
         if (!prefab.GetComponent<Rigidbody>())
         {
             prefab.AddComponent<BoxCollider>();
@@ -285,8 +305,8 @@ public class GameManager : MonoBehaviour {
         {
             PreviousGameState = GameState;
             GameState = eGameState.PAUSE;
-            m_leftMenu.ForceCloseMenu();
-            m_rightMenu.ForceCloseMenu();
+            //m_leftMenu.ForceCloseMenu();
+            //m_rightMenu.ForceCloseMenu();
             m_pauseMenu.SetActive(true);
             //When game pauses probable disable the entire level and open up the GUI
         } else if(GameState == eGameState.PAUSE)

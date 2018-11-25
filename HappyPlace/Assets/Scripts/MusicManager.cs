@@ -11,24 +11,29 @@ public class MusicManager : MonoBehaviour {
     [SerializeField]
     private GameObject m_songContainer = null;
     [SerializeField]
-    private Canvas m_musicMenuCanvas = null;
-    [SerializeField]
     private GameObject m_buttonTemplate = null;
 
     private GameManager m_gameManager = null;
 
     private AudioSource m_audioSource = null;
-    private AssetBundle m_julianRayAssetBundle;
+    public AssetBundle JulianRayAssetBundle { get; private set; }
     private AssetBundleCreateRequest m_loadedAssetBundle;
 
-    private string[] m_julianRayAssetNames;
+    public string[] JulianRayAssetNames { get; private set; }
     private AudioClip m_currentSong = null;
 
     private bool m_done = false;
 
     private void Awake()
     {
-        m_loadedAssetBundle = AssetBundle.LoadFromFileAsync(Path.Combine(Application.streamingAssetsPath, "julianray"));
+        m_gameManager = FindObjectOfType<GameManager>();
+        m_audioSource = m_gameManager.AudioPlayer;
+        
+        if(m_gameManager.JulianRayAssetBundle == null)
+        {
+            m_loadedAssetBundle = AssetBundle.LoadFromFileAsync(Path.Combine(Application.streamingAssetsPath, "julianray"));
+            print("loading julian ray asset bundle");
+        }
     }
 
     public string GetCurrentSongName()
@@ -36,32 +41,24 @@ public class MusicManager : MonoBehaviour {
         return m_currentSong.name;
     }
 
-    private void Start()
-    {
-        m_gameManager = FindObjectOfType<GameManager>();
-        m_audioSource = m_gameManager.AudioPlayer;
-        m_gameManager.FindAndSaveMusicMenu();
-        m_gameManager.FindAndSavePauseMenu();
-    }
-
     private void Update()
     {
-        if(m_loadedAssetBundle.isDone && !m_done)
+        if(m_loadedAssetBundle.isDone && !m_done && m_gameManager.RealistForestAssetBundle == null)
         {
             m_done = true;
-            m_julianRayAssetBundle = m_loadedAssetBundle.assetBundle;
-            m_julianRayAssetNames = m_julianRayAssetBundle.GetAllAssetNames();
+            JulianRayAssetBundle = m_loadedAssetBundle.assetBundle;
+            JulianRayAssetNames = JulianRayAssetBundle.GetAllAssetNames();
 
             m_audioSource = GetComponent<AudioSource>();
 
             if (m_songContainer != null && m_buttonTemplate != null)
             {
-                for (int i = 0; i < m_julianRayAssetNames.Length; i++)
+                for (int i = 0; i < JulianRayAssetNames.Length; i++)
                 {
                     GameObject obj = Instantiate(m_buttonTemplate, m_songContainer.transform);
                     Button newButton = obj.GetComponent<Button>();
                     //appears as "assets/audio/music/julianray/julian ray - smooth & jazzy - 08 strawberry moon.wav"
-                    string songName = m_julianRayAssetNames[i];
+                    string songName = JulianRayAssetNames[i];
                     songName = songName.Replace("assets/audio/music/julianray/julian ray - smooth & jazzy - ", string.Empty);
                     songName = songName.Remove(0, 3);
                     songName = songName.Replace(".wav", string.Empty);
@@ -71,6 +68,7 @@ public class MusicManager : MonoBehaviour {
                     m_menuButtons.Add(newButton);
                 }
             }
+            m_gameManager.FinalizeLoadingJulianRayMusic();
         }
     }
 
@@ -78,12 +76,12 @@ public class MusicManager : MonoBehaviour {
     {
         int songNum = m_menuButtons.IndexOf(button);
 
-        PlaySongByName(m_julianRayAssetNames[songNum]);
+        PlaySongByName(JulianRayAssetNames[songNum]);
     }
 
     public void PlaySongByName(string name)
     {
-        AudioClip clip = m_julianRayAssetBundle.LoadAsset<AudioClip>(name);
+        AudioClip clip = JulianRayAssetBundle.LoadAsset<AudioClip>(name);
         m_currentSong = clip;
         if(m_audioSource.isPlaying)
         {

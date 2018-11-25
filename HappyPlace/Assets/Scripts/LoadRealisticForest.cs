@@ -15,14 +15,24 @@ public class LoadRealisticForest : MonoBehaviour {
 
     private void Awake()
     {
+        if(FindObjectsOfType<LoadRealisticForest>().Length > 1)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+
         m_gameManager = FindObjectOfType<GameManager>();
 
-        m_loadedAssetBundle = AssetBundle.LoadFromFileAsync(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
+        if(m_gameManager.RealistForestAssetBundle == null)
+        {
+            m_loadedAssetBundle = AssetBundle.LoadFromFileAsync(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
+            print("loading realistic forest asset bundle");
+        }
     }
 
     private void Update()
     {
-        if(m_loadedAssetBundle.isDone && !m_done)
+        if(m_loadedAssetBundle.isDone && !m_done && m_gameManager.RealistForestAssetBundle == null)
         {
             m_done = true;
             RealistForestAssetBundle = m_loadedAssetBundle.assetBundle;
