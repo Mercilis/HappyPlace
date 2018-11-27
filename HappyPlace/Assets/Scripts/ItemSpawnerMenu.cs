@@ -39,6 +39,8 @@ public class ItemSpawnerMenu : MonoBehaviour {
     private void Start()
     {
         m_gameManager = FindObjectOfType<GameManager>();
+        m_gameManager.PlacedObjectStorage = GameObject.FindGameObjectWithTag("PlacedObjectStorage");
+        m_mainObjectContainer = m_gameManager.m_MainObjectStorage;
         m_displayBounds = GetComponent<BoxCollider>();
         m_lever = GetComponentInChildren<VRTK_Lever>();
         m_categoryCanvas.gameObject.SetActive(true);
@@ -107,6 +109,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
         //print("display size x: " + m_displayBounds.size.x);
         if(!m_displayBounds.bounds.Contains(obj.transform.position))
         {
+            obj.layer = 2;
             List<MeshRenderer> renderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
             renderers.Add(obj.GetComponent<MeshRenderer>());
             for (int i = 0; i < renderers.Count; i++)
@@ -116,6 +119,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
         }
         else
         {
+            obj.layer = 0;
             List<MeshRenderer> renderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
             renderers.Add(obj.GetComponent<MeshRenderer>());
             for (int i = 0; i < renderers.Count; i++)
@@ -148,6 +152,8 @@ public class ItemSpawnerMenu : MonoBehaviour {
                 objTrans.localScale = new Vector3(m_baseMenuObjectScale, m_baseMenuObjectScale, m_baseMenuObjectScale);
                 objTrans.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += CreateAndReplaceObject;
                 obj.GetComponent<PlaceableObject>().DistanceMod = xDistanceMod;
+                obj.GetComponent<PlaceableObject>().ObjectState = PlaceableObject.eObjectState.IN_MENU;
+                //print("when category clicked, object name is: " + obj.GetComponent<PlaceableObject>().ObjectName);
                 distanceMod += 0.5f;
                 if(i == m_objects[categoryNum].Count - 1)
                 {
@@ -164,14 +170,24 @@ public class ItemSpawnerMenu : MonoBehaviour {
     
     private void MakeAMenuObject(GameObject obj, float distanceMod)
     {
-        GameObject newObj = Instantiate(obj, m_worldObjectDisplay.transform, false);
+        //print("make a menu object called for " + obj.name);
+        obj.transform.SetParent(m_gameManager.PlacedObjectStorage.transform, true);
+        GameObject newObj = Instantiate(obj);
         Transform objTrans = newObj.transform;
-        objTrans.gameObject.SetActive(true);
         objTrans.SetParent(m_worldObjectDisplay.transform, false);
-        objTrans.position = new Vector3(distanceMod, obj.transform.position.y, obj.transform.position.z);
+        newObj.gameObject.SetActive(true);
+        objTrans.position = new Vector3(obj.transform.localPosition.x, obj.transform.localPosition.y, obj.transform.localPosition.z);
+        //objTrans.SetParent(m_worldObjectDisplay.transform, false);
         objTrans.localScale = new Vector3(m_baseMenuObjectScale, m_baseMenuObjectScale, m_baseMenuObjectScale);
-        obj.transform.SetParent(m_gameManager.PlaceObjectStorage.transform);
-        objTrans.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += CreateAndReplaceObject;
+        newObj.GetComponent<PlaceableObject>().ObjectState = PlaceableObject.eObjectState.IN_MENU;
+        string oldObjName = obj.GetComponent<PlaceableObject>().ObjectName;
+        newObj.GetComponent<PlaceableObject>().ObjectName = oldObjName;
+        //print("old obj name: " + oldObjName);
+        newObj.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed += CreateAndReplaceObject;
+        obj.GetComponent<VRTK_InteractableObject>().InteractableObjectGrabbed -= CreateAndReplaceObject;
+        int indexOfObject = m_objects[m_currentCategoryNum].IndexOf(obj);
+        m_objects[m_currentCategoryNum][indexOfObject] = newObj;
+        CalculateObjectsVisibility(newObj);
     }
 
     private void CreateAndReplaceObject(object sender, InteractableObjectEventArgs e)

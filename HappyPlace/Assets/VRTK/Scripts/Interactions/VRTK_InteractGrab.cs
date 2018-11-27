@@ -441,7 +441,7 @@ namespace VRTK
             currentGrabbedObject.Grabbed(this);
             currentGrabbedObject.ZeroVelocity();
             currentGrabbedObject.ToggleHighlight(true);
-            print("grab turns on highlight");
+            //print("grab turns on highlight");
             currentGrabbedObject.isKinematic = false;
         }
 

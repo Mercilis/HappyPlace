@@ -7,9 +7,9 @@ public class LoadRealisticForest : MonoBehaviour {
 
     public AssetBundle RealistForestAssetBundle { get; private set; }
     public string[] AllRealisticForestNames { get; private set; }
+    public AssetBundleCreateRequest LoadedAssetBundle { get; private set; }
 
     private GameManager m_gameManager = null;
-    private AssetBundleCreateRequest m_loadedAssetBundle;
 
     private bool m_done = false;
 
@@ -25,17 +25,17 @@ public class LoadRealisticForest : MonoBehaviour {
 
         if(m_gameManager.RealistForestAssetBundle == null)
         {
-            m_loadedAssetBundle = AssetBundle.LoadFromFileAsync(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
+            LoadedAssetBundle = AssetBundle.LoadFromFileAsync(Path.Combine(Application.streamingAssetsPath, "realisticforest"));
             print("loading realistic forest asset bundle");
         }
     }
 
     private void Update()
     {
-        if(m_loadedAssetBundle.isDone && !m_done && m_gameManager.RealistForestAssetBundle == null)
+        if(!m_done && LoadedAssetBundle.isDone && m_gameManager.RealistForestAssetBundle == null)
         {
             m_done = true;
-            RealistForestAssetBundle = m_loadedAssetBundle.assetBundle;
+            RealistForestAssetBundle = LoadedAssetBundle.assetBundle;
             AllRealisticForestNames = RealistForestAssetBundle.GetAllAssetNames();
 
             m_gameManager.FinalizeLoadingRealisticForest();

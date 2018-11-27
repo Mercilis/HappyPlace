@@ -14,7 +14,7 @@ public class PlaceableObject : MonoBehaviour {
         IN_WORLD
     }
 
-    public eObjectState ObjectState { get; private set; }
+    public eObjectState ObjectState { get; set; }
 
     /// <summary>
     /// The distance at which the object with hover above the ground when it is selected.
@@ -81,7 +81,7 @@ public class PlaceableObject : MonoBehaviour {
         m_interactableObject = GetComponent<VRTK_InteractableObject>();
         SetUpInteractableObjectEventListeners();
         m_gameManager = FindObjectOfType<GameManager>();
-        ObjectState = eObjectState.IN_MENU;
+        //ObjectState = eObjectState.IN_MENU;
     }
 
     private void Update()
@@ -133,8 +133,8 @@ public class PlaceableObject : MonoBehaviour {
 
         IsGrabbed = true;
         //print("grab listened!");
-        m_interactableObject.touchHighlightColor = COLOR_VALID;
-        m_interactableObject.ToggleHighlight(true);
+        //m_interactableObject.touchHighlightColor = COLOR_VALID;
+        //m_interactableObject.ToggleHighlight(true);
         //print("placeable object listener turns on highlight");
     }
 
@@ -142,8 +142,9 @@ public class PlaceableObject : MonoBehaviour {
     {
         if(ObjectState == eObjectState.IN_WORLD)
         {
+            if (transform.parent != m_gameManager.PlacedObjectStorage.transform) transform.SetParent(m_gameManager.PlacedObjectStorage.transform, true);
             IsGrabbed = false;
-            m_interactableObject.touchHighlightColor = COLOR_SELECTED;
+            //m_interactableObject.touchHighlightColor = COLOR_SELECTED;
             //m_interactableObject.ToggleHighlight(false);
             Vector3 pos = transform.position;
             transform.position = new Vector3(pos.x, m_gameManager.GLOBAL_FLOOR_HEIGHT, pos.z);
@@ -152,7 +153,7 @@ public class PlaceableObject : MonoBehaviour {
 
     private void InteractableObjectTouchedListener(object sender, InteractableObjectEventArgs e)
     {
-        m_interactableObject.touchHighlightColor = COLOR_SELECTED;
+        //m_interactableObject.touchHighlightColor = COLOR_SELECTED;
     }
 
     private void InteractableObjectUntouchedListener(object sender, InteractableObjectEventArgs e)

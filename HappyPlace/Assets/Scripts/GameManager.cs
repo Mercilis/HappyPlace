@@ -6,8 +6,11 @@ using VRTK;
 using VRTK.Examples;
 using TMPro;
 using UnityEngine.UI;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     public enum eGameState
     {
@@ -31,7 +34,9 @@ public class GameManager : MonoBehaviour {
     public string[] CurrentEnvironmentCategories { get; private set; }
     public List<GameObject>[] ObjectsSortedByCategory;
     [SerializeField]
-    private GameObject m_MainObjectStorage = null;
+    private GameObject m_buttonTemplate = null;
+    [SerializeField]
+    public GameObject m_MainObjectStorage = null;
     [SerializeField]
     private GameObject m_pauseMenu = null;
     [SerializeField]
@@ -40,12 +45,18 @@ public class GameManager : MonoBehaviour {
     private GameObject m_loadingScreenVisual = null;
     [SerializeField]
     private GameObject m_mainMenu = null;
+    [SerializeField]
+    private GameObject m_mainMenuObject = null;
+    [SerializeField]
+    private GameObject m_loadMenu = null;
+    [SerializeField]
+    private GameObject m_saveMenu = null;
 
-    public GameObject PlaceObjectStorage = null;
+    public GameObject PlacedObjectStorage = null;
 
     public AudioSource AudioPlayer { get; private set; }
     private SceneLoader m_sceneLoader = null;
-    
+
     public float GLOBAL_FLOOR_HEIGHT { get; private set; }
 
     #region AssetBundleStuff
@@ -112,6 +123,7 @@ public class GameManager : MonoBehaviour {
     private void Start()
     {
         m_sceneLoader.SetLoadingText(m_loadingScreenVisual.GetComponentInChildren<TextMeshProUGUI>());
+
         FindAndSavePauseMenu();
         //GameObject mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
         //Button playButton = mainMenu.GetComponentInChildren<Button>();
@@ -120,7 +132,7 @@ public class GameManager : MonoBehaviour {
 
     private void Update()
     {
-       
+
     }
 
     #region LoadRealisticForest
@@ -128,7 +140,9 @@ public class GameManager : MonoBehaviour {
     {
         m_loadingScreenVisual.SetActive(true);
         StartCoroutine(m_sceneLoader.LoadSceneByName("RealisticForest"));
-        m_mainMenu.SetActive(false);
+        m_mainMenuObject.SetActive(false);
+        m_musicMenu.SetActive(true);
+        m_musicManager = FindObjectOfType<MusicManager>();
         print("Load realistic forest scene called");
     }
 
@@ -136,10 +150,7 @@ public class GameManager : MonoBehaviour {
     {
         //FindAndSavePauseMenu();
         //FindAndSaveMusicMenu();
-        PreviousGameState = GameState;
-        GameState = eGameState.EDIT;
-        m_loadingScreenVisual.SetActive(false);
-        m_sceneLoader.m_loadScene = false;
+        
         m_realisticForestLoader = FindObjectOfType<LoadRealisticForest>();
         RealistForestAssetBundle = m_realisticForestLoader.RealistForestAssetBundle;
         AllRealisticForestNames = m_realisticForestLoader.AllRealisticForestNames;
@@ -202,9 +213,15 @@ public class GameManager : MonoBehaviour {
 
     public void FinalizeLoadingJulianRayMusic()
     {
+        PreviousGameState = GameState;
+        GameState = eGameState.EDIT;
+        m_loadingScreenVisual.SetActive(false);
+        m_sceneLoader.m_loadScene = false;
         JulianRayAssetBundle = m_musicManager.JulianRayAssetBundle;
         AllJulianRayAssetNames = m_musicManager.JulianRayAssetNames;
-        FindAndSaveMusicMenu();
+        m_musicMenu.SetActive(false);
+        m_musicManager.GetComponent<Canvas>().enabled = true;
+        //FindAndSaveMusicMenu();
     }
 
     public GameObject SpawnItemByName(string name)
@@ -236,9 +253,11 @@ public class GameManager : MonoBehaviour {
             VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter outline = prefab.AddComponent<VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter>();
             outline.active = true;
             outline.unhighlightOnDisable = true;
-            prefab.AddComponent<PlaceableObject>().ObjectName = name;
+            prefab.AddComponent<PlaceableObject>();
         }
-        return Instantiate(prefab, Vector3.zero, Quaternion.identity, m_MainObjectStorage.transform);
+        GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, m_MainObjectStorage.transform);
+        obj.GetComponent<PlaceableObject>().ObjectName = name;
+        return obj;
     }
 
 
@@ -246,7 +265,7 @@ public class GameManager : MonoBehaviour {
     public SpaceData CreateSaveData()
     {
         SpaceData spaceData = new SpaceData();
-        PlaceableObject[] objects = PlaceObjectStorage.GetComponentsInChildren<PlaceableObject>();
+        PlaceableObject[] objects = PlacedObjectStorage.GetComponentsInChildren<PlaceableObject>();
         spaceData.m_objectsInSpace = new ObjectData[objects.Length];
 
         for (int i = 0; i < objects.Length; i++)
@@ -254,6 +273,7 @@ public class GameManager : MonoBehaviour {
             ObjectData objData = new ObjectData();
 
             objData.AssetBundleName = objects[i].ObjectName;
+            print(objects[i].ObjectName);
             objData.TransformLocation = objects[i].transform.position;
             objData.TransformRotation = objects[i].transform.rotation;
 
@@ -261,21 +281,124 @@ public class GameManager : MonoBehaviour {
         }
 
         spaceData.m_musicAssetBundle = "julianray";
-        spaceData.m_currentSongInSpaceName = FindObjectOfType<MusicManager>().GetCurrentSongName();
+        m_musicMenu.GetComponent<Canvas>().enabled = false;
+        m_musicMenu.SetActive(true);
+        spaceData.m_currentSongInSpaceName = m_musicManager.GetCurrentSongName();
+        m_musicMenu.SetActive(false);
+        m_musicMenu.GetComponent<Canvas>().enabled = true;
 
         return spaceData;
     }
 
-    public void SaveGame()
+    public void SaveGame(Button button)
     {
         SpaceData spaceData = CreateSaveData();
 
+        BinaryFormatter bf = new BinaryFormatter();
+        SurrogateSelector surrogateSelector = new SurrogateSelector();
+        Vector3SerializationSurrogate vector3SS = new Vector3SerializationSurrogate();
+        QuaternionSerializationSurrogate quatSS = new QuaternionSerializationSurrogate();
 
+        surrogateSelector.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), vector3SS);
+        surrogateSelector.AddSurrogate(typeof(Quaternion), new StreamingContext(StreamingContextStates.All), quatSS);
+        bf.SurrogateSelector = surrogateSelector;
+
+        FileStream file = File.Create(Application.persistentDataPath + "/" + CurrentEnvironment + ".space");
+        bf.Serialize(file, spaceData);
+        file.Close();
+        print("Game saved");
+        StartCoroutine(SavedGameAlert(button.GetComponentInChildren<TextMeshProUGUI>()));
     }
 
-    public void LoadGame()
+    private IEnumerator SavedGameAlert(TextMeshProUGUI text)
     {
+        text.text = "Saved!";
+        yield return new WaitForSeconds(0.3f);
+        text.text = "Save";
+    }
 
+    public void LoadGame(string spaceName)
+    {
+        if (File.Exists(spaceName))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            SurrogateSelector surrogateSelector = new SurrogateSelector();
+            Vector3SerializationSurrogate vector3SS = new Vector3SerializationSurrogate();
+            QuaternionSerializationSurrogate quatSS = new QuaternionSerializationSurrogate();
+
+            surrogateSelector.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), vector3SS);
+            surrogateSelector.AddSurrogate(typeof(Quaternion), new StreamingContext(StreamingContextStates.All), quatSS);
+            bf.SurrogateSelector = surrogateSelector;
+
+            FileStream file = File.Open(spaceName, FileMode.Open);
+            SpaceData save = (SpaceData)bf.Deserialize(file);
+            file.Close();
+
+            //load sccene first then place all the objects
+            LoadRealisticForestScene();
+            StartCoroutine(LoadObjectsFromSave(save));
+            print("saved song name: " + save.m_currentSongInSpaceName);
+            StartCoroutine(LoadMusicAndPlay(save.m_currentSongInSpaceName));
+            print("Game loaded");
+        }
+        else
+        {
+            print("Save not found");
+        }
+    }
+
+    public IEnumerator LoadMusicAndPlay(string songName)
+    {
+        bool loadedSong = false;
+        AssetBundleCreateRequest assetRequest = m_musicManager.LoadedAssetBundle;
+        while (!assetRequest.isDone || !loadedSong)
+        {
+            assetRequest = m_musicManager.LoadedAssetBundle;
+            if (assetRequest.isDone)
+            {
+                print(songName);
+                m_musicManager.PlaySongByName(songName);
+
+                loadedSong = true;
+            }
+            yield return null;
+        }
+        print("left the load music and play coroutine");
+    }
+
+    public IEnumerator LoadObjectsFromSave(SpaceData save)
+    {
+        print("there are " + save.m_objectsInSpace.Length + "objects in this save");
+        for (int i = 0; i < save.m_objectsInSpace.Length; i++)
+        {
+            if(m_realisticForestLoader == null)
+            {
+                m_realisticForestLoader = GetComponent<LoadRealisticForest>();
+                i = -1;
+            }
+            else
+            {
+                print("successfully grabbed realistic forest loader");
+                AssetBundleCreateRequest assetRequest = m_realisticForestLoader.LoadedAssetBundle;
+                if (assetRequest.isDone)
+                {
+                    ObjectData objData = save.m_objectsInSpace[i];
+                    print("asset bundle loaded and loading object: " + objData.AssetBundleName);
+                    GameObject obj = SpawnItemByName(objData.AssetBundleName);
+                    obj.transform.position = objData.TransformLocation;
+                    obj.transform.rotation = objData.TransformRotation;
+                    obj.transform.SetParent(PlacedObjectStorage.transform);
+                }
+                else
+                {
+                    i = -1;
+                }
+
+            }
+
+            yield return null;
+        }
+        print("left the loading objects coroutine");
     }
     #endregion
 
@@ -301,7 +424,7 @@ public class GameManager : MonoBehaviour {
     private void OpenPauseMenuOnButtonTwoPress(object sender, ControllerInteractionEventArgs e)
     {
         //Enable the pause menu and change the game state to pause only if not already paused or not in main menu
-        if(GameState != eGameState.PAUSE && GameState != eGameState.MAINMENU)
+        if (GameState != eGameState.PAUSE && GameState != eGameState.MAINMENU)
         {
             PreviousGameState = GameState;
             GameState = eGameState.PAUSE;
@@ -309,7 +432,8 @@ public class GameManager : MonoBehaviour {
             //m_rightMenu.ForceCloseMenu();
             m_pauseMenu.SetActive(true);
             //When game pauses probable disable the entire level and open up the GUI
-        } else if(GameState == eGameState.PAUSE)
+        }
+        else if (GameState == eGameState.PAUSE)
         {
             ClosePauseMenu();
         }
@@ -318,6 +442,7 @@ public class GameManager : MonoBehaviour {
     //This will be hooked up to a GUI button
     public void ClosePauseMenu()
     {
+        print(GameState);
         if (GameState == eGameState.PAUSE)
         {
             GameState = PreviousGameState;
@@ -334,7 +459,63 @@ public class GameManager : MonoBehaviour {
     public void CloseMusicMenu()
     {
         m_pauseMenu.SetActive(true);
+        GameState = eGameState.PAUSE;
         m_musicMenu.SetActive(false);
+    }
+
+    public void OpenLoadMenu()
+    {
+        //Find the local saves and create buttons based off of them, if any
+        foreach (Button obj in m_loadMenu.GetComponentsInChildren<Button>())
+        {
+            if(obj.gameObject.name != "Back") Destroy(obj.gameObject);
+        }
+        print(Application.persistentDataPath);
+        foreach (string file in Directory.GetFiles(Application.persistentDataPath))
+        {
+            print("filename found using directory: " + file);
+
+            CreateButtonForLoadMenu(file);
+        }
+        m_loadMenu.SetActive(true);
+        m_mainMenu.SetActive(false);
+    }
+
+    private void CreateButtonForLoadMenu(string name)
+    {
+        //appears as C:/Users/Dakota/AppData/LocalLow/DarkPluto/HappyPlace\REALISTIC_FOREST.space
+        //need it to only have REALISTIC_FOREST
+        string s = name;
+        string nameOfGame = "/HappyPlace";
+        int indexOfName = s.IndexOf(nameOfGame);
+        s = s.Remove(0, indexOfName + nameOfGame.Length + 1);
+        s = s.Replace(".space", string.Empty);
+        print("name for button: " + s);
+        GameObject obj = Instantiate(m_buttonTemplate, m_loadMenu.transform);
+        Button newButton = obj.GetComponent<Button>();
+        obj.GetComponentInChildren<TextMeshProUGUI>().text = s;
+        string filePath = name.Replace("\\", "/");
+        print("filepath for loading: " + filePath);
+        newButton.onClick.AddListener(delegate { LoadGame(filePath); });
+        obj.transform.SetAsFirstSibling();
+    }
+
+    public void CloseLoadMenu()
+    {
+        m_mainMenu.SetActive(true);
+        m_loadMenu.SetActive(false);
+    }
+
+    public void OpenSaveMenu()
+    {
+        m_saveMenu.SetActive(true);
+        m_pauseMenu.SetActive(false);
+    }
+
+    public void CloseSaveMenu()
+    {
+        m_pauseMenu.SetActive(true);
+        m_saveMenu.SetActive(false);
     }
     #endregion
 }

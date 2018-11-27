@@ -8,6 +8,7 @@ TagManager:
   - MusicMenu
   - MainMenu
   - CameraRig
+  - PlacedObjectStorage
   layers:
   - Default
   - TransparentFX
