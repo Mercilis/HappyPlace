@@ -34,6 +34,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
     private int m_valueThresholdForMovement = 5;
     private float m_displayDisplacement = 0.0f;
     private float m_maxDistanceForDisplay = 10.0f;
+    private bool m_objectsBeingDisplayed = false;
     private float m_displayMovementSpeedBase = 0.5f;
 
     private void Start()
@@ -64,11 +65,11 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private void Update()
     {
-        if(Mathf.Abs(m_lever.GetValue()) > m_valueThresholdForMovement && Mathf.Abs(m_displayDisplacement) <= m_maxDistanceForDisplay)
+        Vector3 pos = m_worldObjectDisplay.transform.position;
+        float movement = (m_displayMovementSpeedBase * m_lever.GetValue()) * Time.deltaTime;
+        if(Mathf.Abs(m_lever.GetValue()) > m_valueThresholdForMovement && Mathf.Abs(m_displayDisplacement + movement) <= m_maxDistanceForDisplay && m_objectsBeingDisplayed)
         {
             //Move the menu
-            Vector3 pos = m_worldObjectDisplay.transform.position;
-            float movement = (m_displayMovementSpeedBase * m_lever.GetValue()) * Time.deltaTime;
             m_displayDisplacement += movement;
             m_worldObjectDisplay.transform.position = new Vector3(pos.x + movement, pos.y, pos.z);
             for (int i = 0; i < m_activeMenuObjects.Count; i++)
@@ -107,24 +108,27 @@ public class ItemSpawnerMenu : MonoBehaviour {
         //}
 
         //print("display size x: " + m_displayBounds.size.x);
-        if(!m_displayBounds.bounds.Contains(obj.transform.position))
+        if(obj.GetComponent<PlaceableObject>().ObjectState == PlaceableObject.eObjectState.IN_MENU)
         {
-            obj.layer = 2;
-            List<MeshRenderer> renderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
-            renderers.Add(obj.GetComponent<MeshRenderer>());
-            for (int i = 0; i < renderers.Count; i++)
+            if(!m_displayBounds.bounds.Contains(obj.transform.position))
             {
-                if(renderers[i] != null) renderers[i].enabled = false;
+                obj.layer = 2;
+                List<MeshRenderer> renderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
+                renderers.Add(obj.GetComponent<MeshRenderer>());
+                for (int i = 0; i < renderers.Count; i++)
+                {
+                    if(renderers[i] != null) renderers[i].enabled = false;
+                }
             }
-        }
-        else
-        {
-            obj.layer = 0;
-            List<MeshRenderer> renderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
-            renderers.Add(obj.GetComponent<MeshRenderer>());
-            for (int i = 0; i < renderers.Count; i++)
+            else
             {
-                if (renderers[i] != null) renderers[i].enabled = true;
+                obj.layer = 0;
+                List<MeshRenderer> renderers = new List<MeshRenderer>(obj.GetComponentsInChildren<MeshRenderer>());
+                renderers.Add(obj.GetComponent<MeshRenderer>());
+                for (int i = 0; i < renderers.Count; i++)
+                {
+                    if (renderers[i] != null) renderers[i].enabled = true;
+                }
             }
         }
     }
@@ -134,6 +138,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
         print(button.GetComponentInChildren<TextMeshProUGUI>().text + " category clicked");
         m_categoryCanvas.gameObject.SetActive(false);
         m_backCanvas.gameObject.SetActive(true);
+        m_objectsBeingDisplayed = true;
         int categoryNum = m_menuButtons.IndexOf(button);
         m_currentCategoryNum = categoryNum;
         float distanceMod = 0.0f;
@@ -154,11 +159,11 @@ public class ItemSpawnerMenu : MonoBehaviour {
                 obj.GetComponent<PlaceableObject>().DistanceMod = xDistanceMod;
                 obj.GetComponent<PlaceableObject>().ObjectState = PlaceableObject.eObjectState.IN_MENU;
                 //print("when category clicked, object name is: " + obj.GetComponent<PlaceableObject>().ObjectName);
-                distanceMod += 0.5f;
                 if(i == m_objects[categoryNum].Count - 1)
                 {
-                    m_maxDistanceForDisplay = distanceMod;
+                    m_maxDistanceForDisplay = Mathf.Abs(distanceMod) - (m_displayBounds.size.x/2.0f);
                 }
+                distanceMod += 0.5f;
             }
             m_worldObjectDisplay.transform.SetParent(transform, false);
             for (int i = 0; i < m_objects[categoryNum].Count; i++)
@@ -213,7 +218,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
             }
             m_worldObjectDisplay.transform.SetParent(null, true);
         }
-
+        m_objectsBeingDisplayed = false;
         m_backCanvas.gameObject.SetActive(false);
         m_categoryCanvas.gameObject.SetActive(true);
     }
