@@ -185,6 +185,7 @@ public class ItemSpawnerMenu : MonoBehaviour {
         //objTrans.SetParent(m_worldObjectDisplay.transform, false);
         objTrans.localScale = new Vector3(m_baseMenuObjectScale, m_baseMenuObjectScale, m_baseMenuObjectScale);
         newObj.GetComponent<PlaceableObject>().ObjectState = PlaceableObject.eObjectState.IN_MENU;
+        obj.GetComponent<PlaceableObject>().ObjectState = PlaceableObject.eObjectState.IN_WORLD;
         string oldObjName = obj.GetComponent<PlaceableObject>().ObjectName;
         newObj.GetComponent<PlaceableObject>().ObjectName = oldObjName;
         //print("old obj name: " + oldObjName);

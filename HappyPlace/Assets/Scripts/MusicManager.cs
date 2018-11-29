@@ -71,7 +71,7 @@ public class MusicManager : MonoBehaviour {
                     string songName = JulianRayAssetNames[i];
                     songName = songName.Replace("assets/audio/music/julianray/julian ray - smooth & jazzy - ", string.Empty);
                     songName = songName.Remove(0, 3);
-                    songName = songName.Replace(".wav", string.Empty);
+                    songName = songName.Replace(".mp3", string.Empty);
                     print(songName);
                     obj.GetComponentInChildren<TextMeshProUGUI>().text = songName;
                     newButton.onClick.AddListener(delegate { OnSongClicked(newButton); });

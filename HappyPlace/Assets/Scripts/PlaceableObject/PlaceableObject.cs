@@ -14,7 +14,7 @@ public class PlaceableObject : MonoBehaviour {
         IN_WORLD
     }
 
-    public eObjectState ObjectState { get; set; }
+    public eObjectState ObjectState;
 
     /// <summary>
     /// The distance at which the object with hover above the ground when it is selected.

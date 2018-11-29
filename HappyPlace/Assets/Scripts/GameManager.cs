@@ -276,6 +276,7 @@ public class GameManager : MonoBehaviour
             print(objects[i].ObjectName);
             objData.TransformLocation = objects[i].transform.position;
             objData.TransformRotation = objects[i].transform.rotation;
+            objData.eObjectState = objects[i].ObjectState;
 
             spaceData.m_objectsInSpace[i] = objData;
         }
@@ -388,6 +389,7 @@ public class GameManager : MonoBehaviour
                     obj.transform.position = objData.TransformLocation;
                     obj.transform.rotation = objData.TransformRotation;
                     obj.transform.SetParent(PlacedObjectStorage.transform);
+                    obj.GetComponent<PlaceableObject>().ObjectState = objData.eObjectState;
                 }
                 else
                 {
