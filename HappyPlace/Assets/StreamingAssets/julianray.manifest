@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1844061162
+CRC: 2907028266
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 137559ddacb7729df937288144677304
+    Hash: fb73335b158583b2a388cd2929d7f09e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
@@ -19,7 +19,5 @@ Assets:
 - Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 05 Hardwired Love.mp3
 - Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 03 Life.mp3
 - Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 08 Strawberry Moon.mp3
-- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 10 Jazzy Xmas.mp3
-- Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 04 Melodia Del Mar.mp3
 - Assets/Audio/Music/JulianRay/Julian Ray - Smooth & Jazzy - 09 Flying Imagination.mp3
 Dependencies: []
