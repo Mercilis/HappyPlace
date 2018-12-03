@@ -143,6 +143,7 @@ public class GameManager : MonoBehaviour
         m_mainMenuObject.SetActive(false);
         m_musicMenu.SetActive(true);
         m_musicManager = FindObjectOfType<MusicManager>();
+        m_musicManager.GetComponent<Canvas>().enabled = false;
         print("Load realistic forest scene called");
     }
 
@@ -153,9 +154,16 @@ public class GameManager : MonoBehaviour
         
         m_realisticForestLoader = FindObjectOfType<LoadRealisticForest>();
         RealistForestAssetBundle = m_realisticForestLoader.RealistForestAssetBundle;
-        AllRealisticForestNames = m_realisticForestLoader.AllRealisticForestNames;
-        AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
-        CleanUpRealisticForestNamesAndMakeObjects();
+        if(AllRealisticForestNames == null)
+        {
+            AllRealisticForestNames = m_realisticForestLoader.AllRealisticForestNames;
+            AllRealisticForestSimplifiedNames = new string[AllRealisticForestNames.Length];
+            CleanUpRealisticForestNamesAndMakeObjects();
+        }
+        if(JulianRayAssetBundle != null)
+        {
+            m_loadingScreenVisual.SetActive(false);
+        }
     }
 
     private void CleanUpRealisticForestNamesAndMakeObjects()
@@ -208,6 +216,24 @@ public class GameManager : MonoBehaviour
             //print(s);
             AllRealisticForestSimplifiedNames[i] = s;
         }
+    }
+    #endregion
+
+    #region UnloadRealisticForest
+    private void UnloadRealisticForestScene()
+    {
+        RealistForestAssetBundle.Unload(true);
+        m_sceneLoader.UnloadCurrentScene();
+        m_musicManager.Stop();
+        RealistForestAssetBundle = null;
+        Destroy(m_realisticForestLoader.gameObject);
+        m_mainMenuObject.SetActive(true);
+        if(m_loadMenu.activeInHierarchy)
+        {
+            m_loadMenu.SetActive(false);
+            m_mainMenu.SetActive(true);
+        }
+        GameState = eGameState.MAINMENU;
     }
     #endregion
 
@@ -351,18 +377,30 @@ public class GameManager : MonoBehaviour
     public IEnumerator LoadMusicAndPlay(string songName)
     {
         bool loadedSong = false;
-        AssetBundleCreateRequest assetRequest = m_musicManager.LoadedAssetBundle;
-        while (!assetRequest.isDone || !loadedSong)
+        if (JulianRayAssetBundle == null)
         {
-            assetRequest = m_musicManager.LoadedAssetBundle;
-            if (assetRequest.isDone)
+            print("Julian ray asset bundle null, loading it now");
+            if (m_musicManager == null) m_musicManager = FindObjectOfType<MusicManager>();
+            AssetBundleCreateRequest assetRequest = m_musicManager.LoadedAssetBundle;
+            while (!assetRequest.isDone || !loadedSong)
             {
-                print(songName);
-                m_musicManager.PlaySongByName(songName);
+                assetRequest = m_musicManager.LoadedAssetBundle;
+                if (assetRequest.isDone)
+                {
+                    print(songName);
+                    m_musicManager.PlaySongByName(songName);
 
-                loadedSong = true;
+                    loadedSong = true;
+                }
+                yield return null;
             }
-            yield return null;
+        } else
+        {
+            print("julian ray asset bundle not null, playing song");
+            if (m_musicManager == null) m_musicManager = FindObjectOfType<MusicManager>();
+            m_musicManager.PlaySongByName(songName);
+            m_musicMenu.SetActive(false);
+            m_musicManager.GetComponent<Canvas>().enabled = true;
         }
         print("left the load music and play coroutine");
     }
@@ -500,6 +538,12 @@ public class GameManager : MonoBehaviour
         print("filepath for loading: " + filePath);
         newButton.onClick.AddListener(delegate { LoadGame(filePath); });
         obj.transform.SetAsFirstSibling();
+    }
+
+    public void GoBackToMainMenu()
+    {
+        m_pauseMenu.SetActive(false);
+        UnloadRealisticForestScene();
     }
 
     public void CloseLoadMenu()
