@@ -52,10 +52,16 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject m_saveMenu = null;
 
+    public GameObject CameraRig { get; private set; }
     public GameObject PlacedObjectStorage = null;
-
+    public GameObject ItemSpawner { get; private set; }
     public AudioSource AudioPlayer { get; private set; }
     private SceneLoader m_sceneLoader = null;
+
+    public Activity CurrentActivity { get; private set; }
+    [SerializeField]
+    private GameObject m_activityManagerObject = null;
+    private ActivityManager m_activityManager = null;
 
     public float GLOBAL_FLOOR_HEIGHT { get; private set; }
 
@@ -87,6 +93,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        CameraRig = GameObject.FindGameObjectWithTag("CameraRig");
         if (FindObjectsOfType<GameManager>().Length > 1)
         {
             Destroy(gameObject);
@@ -116,6 +123,8 @@ public class GameManager : MonoBehaviour
         m_rightControllerEvents = m_rightController.GetComponent<VRTK_ControllerEvents>();
         m_leftControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
         m_rightControllerEvents.ButtonTwoPressed += OpenPauseMenuOnButtonTwoPress;
+        m_leftControllerEvents.ButtonOnePressed += CloseOpenItemSpawnerButtonOnePress;
+        m_rightControllerEvents.ButtonOnePressed += CloseOpenItemSpawnerButtonOnePress;
 
         m_sceneLoader = GetComponent<SceneLoader>();
     }
@@ -138,6 +147,8 @@ public class GameManager : MonoBehaviour
     #region LoadRealisticForest
     public void LoadRealisticForestScene()
     {
+        //m_activityManagerObject.SetActive(true);
+        //m_activityManager = m_activityManagerObject.GetComponent<ActivityManager>();
         m_loadingScreenVisual.SetActive(true);
         StartCoroutine(m_sceneLoader.LoadSceneByName("RealisticForest"));
         m_mainMenuObject.SetActive(false);
@@ -151,7 +162,7 @@ public class GameManager : MonoBehaviour
     {
         //FindAndSavePauseMenu();
         //FindAndSaveMusicMenu();
-        
+        ItemSpawner = FindObjectOfType<ItemSpawnerMenu>().gameObject;
         m_realisticForestLoader = FindObjectOfType<LoadRealisticForest>();
         RealistForestAssetBundle = m_realisticForestLoader.RealistForestAssetBundle;
         if(AllRealisticForestNames == null)
@@ -236,6 +247,15 @@ public class GameManager : MonoBehaviour
         GameState = eGameState.MAINMENU;
     }
     #endregion
+
+    public void CloseOpenItemSpawnerButtonOnePress(object sender, ControllerInteractionEventArgs e)
+    {
+        if(GameState == eGameState.EDIT)
+        {
+            if (ItemSpawner && ItemSpawner.activeInHierarchy) ItemSpawner.SetActive(false);
+            else if (ItemSpawner) ItemSpawner.SetActive(true);
+        }
+    }
 
     public void FinalizeLoadingJulianRayMusic()
     {
