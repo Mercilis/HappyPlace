@@ -11,7 +11,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/VRTK/Examples/005_Controller_BasicObjectGrabbing.unity
     guid: 05a9fcd8c10d7b74da0aab19606660f4
-  - enabled: 1
+  - enabled: 0
     path: Assets/VRTK/Examples/034_Controls_InteractingWithUnityUI.unity
     guid: 2ce499512664316478fc7632f4bb4674
+  - enabled: 1
+    path: Assets/Scenes/MainObjects.unity
+    guid: 0d079ad0013cd8d4aab1908d7a24cfce
+  - enabled: 1
+    path: Assets/Scenes/RealisticForest.unity
+    guid: b4a94aafa5f4cbe428368a337d1a9cc7
   m_configObjects: {}
