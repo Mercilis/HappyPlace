@@ -235,6 +235,7 @@ GameObject:
   - component: {fileID: 90472969}
   - component: {fileID: 90472971}
   - component: {fileID: 90472970}
+  - component: {fileID: 90472972}
   m_Layer: 2
   m_Name: ItemSpawner
   m_TagString: Untagged
@@ -251,7 +252,7 @@ Transform:
   m_GameObject: {fileID: 90472967}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -3.1345444, y: 0.6029999, z: -3.2965448}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_Children:
   - {fileID: 347373233}
   - {fileID: 492774452}
@@ -307,6 +308,24 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.4, y: 1.8, z: 1}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &90472972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 90472967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65c67348b8b91c14f986fc73a0f6f456, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Damping: 0.2
+  m_MaxYRotation: 360
+  m_MinYRotation: -360
+  m_targetToFollow: {fileID: 0}
+  m_desiredDistanceX: 2
+  m_desiredDistanceY: 0
+  m_rotationAdjustment: -15
 --- !u!1 &347373232
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,7 +1199,7 @@ MonoBehaviour:
       m_TypeName: VRTK.VRTK_Control+ValueChangedEvent, Assembly-CSharp, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
   interactWithoutGrab: 0
-  connectedTo: {fileID: 0}
+  connectedTo: {fileID: 90472967}
   direction: 0
   minAngle: -25
   maxAngle: 25

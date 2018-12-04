@@ -4,13 +4,85 @@ using UnityEngine;
 
 public class ItemSpawnerFollow : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    [SerializeField] private float m_Damping = 0.2f;        // Used to smooth the rotation of the transform.
+    [SerializeField] private float m_MaxYRotation = 20f;    // The maximum amount the transform can rotate around the y axis.
+    [SerializeField] private float m_MinYRotation = -20f;   // The maximum amount the transform can rotate around the y axis in the opposite direction.
+    [SerializeField] private GameObject m_targetToFollow = null;
+    [SerializeField] private float m_desiredDistanceX = 2.0f;
+    [SerializeField] private float m_desiredDistanceY = 0.0f;
+    [SerializeField] private float m_rotationAdjustment = 5.0f;
+    private Vector3 m_desiredPosition = Vector3.zero;
+    private float m_hoverHeight = 1.69f;
+    private const float k_ExpDampCoef = -20f;               // Coefficient used to damp the rotation.
+
+    private void Awake()
+    {
+        m_hoverHeight = transform.position.y;
+    }
+
+    private void Start()
+    {
+        m_targetToFollow = FindObjectOfType<GameManager>().CameraRig;
+        if (m_targetToFollow)
+        {
+            print("found camera rig");
+            m_desiredPosition = m_targetToFollow.transform.position + ((m_targetToFollow.transform.right + m_targetToFollow.transform.forward) * 3);
+            Vector3 targetpos = new Vector3(m_desiredPosition.x, m_hoverHeight, m_desiredPosition.z);
+            Matrix4x4 adjust = new Matrix4x4(new Vector4(Mathf.Cos(-20), 0, -Mathf.Sin(-20), 0), new Vector4(0, 1, 0, 0), new Vector4(Mathf.Sin(-20), 0, Mathf.Cos(-20), 0), new Vector4(0, 0, 0, 1));
+            targetpos = adjust * targetpos;
+            m_desiredPosition = targetpos;
+            transform.position = m_desiredPosition;
+        }
+    }
+
+    private void Update()
+    {
+        if (m_targetToFollow)
+        {
+            // Store the Euler rotation of the gameobject.
+            //var eulerRotation = transform.rotation.eulerAngles;
+
+            //// Set the rotation to be the same as the user's in the y axis.
+            //eulerRotation.x = 0;
+            //eulerRotation.z = 0;
+            //eulerRotation.y = UnityEngine.XR.InputTracking.GetLocalRotation(UnityEngine.XR.XRNode.Head).eulerAngles.y;
+
+            //// Add 360 to the rotation so that it can effectively be clamped.
+            //if (eulerRotation.y < 270)
+            //    eulerRotation.y += 360;
+
+            //// Clamp the rotation between the minimum and maximum.
+            //eulerRotation.y = Mathf.Clamp(eulerRotation.y, 360 + m_MinYRotation, 360 + m_MaxYRotation);
+
+            //// Smoothly damp the rotation towards the newly calculated rotation.
+            //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(eulerRotation),
+            //    m_Damping * (1 - Mathf.Exp(k_ExpDampCoef * Time.deltaTime)));
+            transform.LookAt(m_targetToFollow.transform.position, Vector3.up);
+            transform.Rotate(new Vector3(0, 180, 0));
+            Quaternion currentRotation = transform.localRotation;
+
+            Quaternion adjust = Quaternion.AngleAxis(m_rotationAdjustment, Vector3.up);
+            Vector3 direction = ((m_targetToFollow.transform.forward + m_targetToFollow.transform.right) * m_desiredDistanceX);
+            direction = adjust * direction;
+            m_desiredPosition = m_targetToFollow.transform.position + direction + (Vector3.up * m_desiredDistanceY);
+            Vector3 targetpos = new Vector3(m_desiredPosition.x, m_hoverHeight, m_desiredPosition.z);
+            //targetpos = adjust * targetpos;
+            m_desiredPosition = targetpos;
+            transform.localRotation = new Quaternion(0, currentRotation.y, 0, currentRotation.w);
+            if (m_desiredPosition != transform.position)
+            {
+                transform.position = Vector3.Lerp(transform.position, targetpos, m_Damping * (1 - Mathf.Exp(k_ExpDampCoef * Time.deltaTime)));
+            }
+        }
+        else
+        {
+            m_targetToFollow = GameObject.FindGameObjectWithTag("CameraRig");
+            if (m_targetToFollow)
+            {
+                print("found camera rig");
+                m_desiredPosition = m_targetToFollow.transform.position + ((m_targetToFollow.transform.right + m_targetToFollow.transform.forward) * 3);
+                transform.position = m_desiredPosition;
+            }
+        }
+    }
 }
