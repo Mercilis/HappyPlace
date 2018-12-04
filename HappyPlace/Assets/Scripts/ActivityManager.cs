@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ActivityManager : MonoBehaviour {
 
+    public AssetBundleCreateRequest ActivityBundleCreateRequest { get; private set; }
+    public AssetBundle ActivityBundle { get; private set; }
     private Activity[] m_activities = null;
 
     private void Awake()

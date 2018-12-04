@@ -11,4 +11,9 @@ public class Activity : MonoBehaviour {
     {
         print("Loaded activity for " + ActivityName != null ? ActivityName : "null name");
     }
+
+    public virtual void UnloadActivity()
+    {
+        print("Unloaded activity for " + ActivityName != null ? ActivityName : "null name");
+    }
 }

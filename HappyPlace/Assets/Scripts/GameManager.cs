@@ -59,10 +59,7 @@ public class GameManager : MonoBehaviour
     private SceneLoader m_sceneLoader = null;
 
     public Activity CurrentActivity { get; private set; }
-    [SerializeField]
-    private GameObject m_activityManagerObject = null;
-    private ActivityManager m_activityManager = null;
-
+    
     public float GLOBAL_FLOOR_HEIGHT { get; private set; }
 
     #region AssetBundleStuff
@@ -76,6 +73,12 @@ public class GameManager : MonoBehaviour
     private MusicManager m_musicManager = null;
     public AssetBundle JulianRayAssetBundle { get; private set; }
     public string[] AllJulianRayAssetNames { get; private set; }
+
+    //Activty Asset Bundle
+    [SerializeField]
+    private GameObject m_activityManagerObject = null;
+    private ActivityManager m_activityManager = null;
+    public AssetBundle ActivityAssetBundle { get; private set; }
     #endregion
 
     #region PlayerControllers
@@ -147,8 +150,8 @@ public class GameManager : MonoBehaviour
     #region LoadRealisticForest
     public void LoadRealisticForestScene()
     {
-        //m_activityManagerObject.SetActive(true);
-        //m_activityManager = m_activityManagerObject.GetComponent<ActivityManager>();
+        m_activityManagerObject.SetActive(true);
+        m_activityManager = m_activityManagerObject.GetComponent<ActivityManager>();
         m_loadingScreenVisual.SetActive(true);
         StartCoroutine(m_sceneLoader.LoadSceneByName("RealisticForest"));
         m_mainMenuObject.SetActive(false);
