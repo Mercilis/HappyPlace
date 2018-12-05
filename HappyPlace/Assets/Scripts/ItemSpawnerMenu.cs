@@ -73,10 +73,10 @@ public class ItemSpawnerMenu : MonoBehaviour {
             m_displayDisplacement += movement;
             Vector3 moveDirection = new Vector3(transform.forward.x * -movement, transform.forward.y, 0);
             m_worldObjectDisplay.transform.localPosition = pos + moveDirection;
-            for (int i = 0; i < m_activeMenuObjects.Count; i++)
-            {
-                CalculateObjectsVisibility(m_activeMenuObjects[i]);
-            }
+        }
+        for (int i = 0; i < m_activeMenuObjects.Count; i++)
+        {
+            CalculateObjectsVisibility(m_activeMenuObjects[i]);
         }
     }
 
