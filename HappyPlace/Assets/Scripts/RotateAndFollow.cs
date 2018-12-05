@@ -18,7 +18,7 @@ public class RotateAndFollow : MonoBehaviour {
     private void Start()
     {
         m_targetToFollow = GameObject.FindGameObjectWithTag("CameraRig");
-        if(m_targetToFollow)
+        if (m_targetToFollow)
         {
             print("found camera rig");
             m_desiredPosition = m_targetToFollow.transform.position + (m_targetToFollow.transform.forward * 5);
@@ -61,6 +61,7 @@ public class RotateAndFollow : MonoBehaviour {
         } else
         {
             m_targetToFollow = GameObject.FindGameObjectWithTag("CameraRig");
+            print("cant find camera rig");
             if (m_targetToFollow)
             {
                 print("found camera rig");

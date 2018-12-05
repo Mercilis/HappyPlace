@@ -108,6 +108,16 @@ namespace VRTK.GrabAttachMechanics
 
         protected virtual void SetSnappedObjectPosition(GameObject obj)
         {
+            if (obj == null)
+            {
+                print("obj trying to grab is null");
+                return;
+            }
+            if(controllerAttachPoint == null)
+            {
+                print("controller attach point is null");
+                CreateJoint(obj);
+            }
             if (grabbedSnapHandle == null)
             {
                 obj.transform.position = controllerAttachPoint.transform.position;

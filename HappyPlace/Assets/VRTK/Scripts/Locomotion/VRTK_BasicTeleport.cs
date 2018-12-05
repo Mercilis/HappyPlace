@@ -136,6 +136,7 @@ namespace VRTK
         /// <param name="teleportArgs">The pseudo Destination Marker event for the teleport action.</param>
         public virtual void Teleport(DestinationMarkerEventArgs teleportArgs)
         {
+            print("teleporting!");
             DoTeleport(this, teleportArgs);
         }
 

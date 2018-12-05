@@ -2138,7 +2138,7 @@ MonoBehaviour:
   invalidCollisionColor: {r: 1, g: 0, b: 0, a: 1}
   tracerVisibility: 0
   cursorVisibility: 0
-  maximumLength: 5
+  maximumLength: 10
   scaleFactor: 0.002
   cursorScaleMultiplier: 25
   cursorMatchTargetRotation: 0
@@ -2164,7 +2164,7 @@ MonoBehaviour:
   holdButtonToActivate: 1
   activateOnEnable: 0
   activationDelay: 0
-  selectionButton: 12
+  selectionButton: 3
   selectOnPress: 1
   selectionDelay: 0
   selectAfterHoverDuration: 0
@@ -2218,7 +2218,7 @@ MonoBehaviour:
   pointerSetButton: 10
   grabToggleButton: 7
   useToggleButton: 3
-  uiClickButton: 12
+  uiClickButton: 3
   menuToggleButton: 14
   axisFidelity: 1
   triggerClickThreshold: 1
@@ -3726,7 +3726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b26f999cbdac8478b6c2a046256169, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activationButton: 10
+  activationButton: 12
   activationMode: 0
   selectionButton: 3
   clickMethod: 0
@@ -3792,7 +3792,7 @@ MonoBehaviour:
   holdButtonToActivate: 1
   activateOnEnable: 0
   activationDelay: 0
-  selectionButton: 12
+  selectionButton: 3
   selectOnPress: 1
   selectionDelay: 0
   selectAfterHoverDuration: 0
@@ -5907,6 +5907,7 @@ MonoBehaviour:
   m_loadMenu: {fileID: 1625812350}
   m_saveMenu: {fileID: 0}
   PlacedObjectStorage: {fileID: 0}
+  m_activityManagerObject: {fileID: 0}
   m_leftController: {fileID: 542133055}
   m_rightController: {fileID: 328522182}
 --- !u!82 &818007407

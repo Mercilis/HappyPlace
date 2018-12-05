@@ -345,24 +345,27 @@ namespace VRTK
         protected virtual IEnumerator SetCurrentControllerAttachPoint(string searchPath, int attempts, float delay)
         {
             WaitForSeconds delayInstruction = new WaitForSeconds(delay);
-            Transform defaultAttachPoint = controllerReference.model.transform.Find(searchPath);
-
-            while (defaultAttachPoint == null && attempts > 0)
+            if (searchPath != null)
             {
-                defaultAttachPoint = controllerReference.model.transform.Find(searchPath);
-                attempts--;
-                yield return delayInstruction;
-            }
+                Transform defaultAttachPoint = controllerReference.model.transform.Find(searchPath);
 
-            if (defaultAttachPoint != null)
-            {
-                controllerAttachPoint = defaultAttachPoint.GetComponent<Rigidbody>();
-
-                if (controllerAttachPoint == null)
+                while (defaultAttachPoint == null && attempts > 0)
                 {
-                    Rigidbody autoGenRB = defaultAttachPoint.gameObject.AddComponent<Rigidbody>();
-                    autoGenRB.isKinematic = true;
-                    controllerAttachPoint = autoGenRB;
+                    defaultAttachPoint = controllerReference.model.transform.Find(searchPath);
+                    attempts--;
+                    yield return delayInstruction;
+                }
+
+                if (defaultAttachPoint != null)
+                {
+                    controllerAttachPoint = defaultAttachPoint.GetComponent<Rigidbody>();
+
+                    if (controllerAttachPoint == null)
+                    {
+                        Rigidbody autoGenRB = defaultAttachPoint.gameObject.AddComponent<Rigidbody>();
+                        autoGenRB.isKinematic = true;
+                        controllerAttachPoint = autoGenRB;
+                    }
                 }
             }
         }

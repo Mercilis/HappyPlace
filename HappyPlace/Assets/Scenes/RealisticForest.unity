@@ -140,7 +140,7 @@ RectTransform:
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -252,14 +252,14 @@ Transform:
   m_GameObject: {fileID: 90472967}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -3.1345444, y: 0.6029999, z: -3.2965448}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children:
   - {fileID: 347373233}
   - {fileID: 492774452}
   - {fileID: 1321572391}
   - {fileID: 422090998}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &90472969
 MonoBehaviour:
@@ -701,6 +701,7 @@ GameObject:
   - component: {fileID: 503191050}
   - component: {fileID: 503191049}
   - component: {fileID: 503191048}
+  - component: {fileID: 503191051}
   m_Layer: 0
   m_Name: ForestTerrain
   m_TagString: Untagged
@@ -761,8 +762,20 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &503191051
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 503191047}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 50, y: 1, z: 50}
+  m_Center: {x: 25, y: -0.25, z: 25}
 --- !u!1 &646943882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,6 +1150,7 @@ GameObject:
   - component: {fileID: 1321572391}
   - component: {fileID: 1321572393}
   - component: {fileID: 1321572392}
+  - component: {fileID: 1321572394}
   m_Layer: 0
   m_Name: Lever
   m_TagString: Untagged
@@ -1206,6 +1220,18 @@ MonoBehaviour:
   stepSize: 1
   releasedFriction: 30
   grabbedFriction: 60
+--- !u!65 &1321572394
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1321572390}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.20939377, y: 0.44990015, z: 0.19193272}
+  m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!1 &1545483070
 GameObject:
   m_ObjectHideFlags: 0
@@ -1232,7 +1258,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1617621674
 GameObject:
@@ -1348,7 +1374,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2039339551
 GameObject:

@@ -65,13 +65,14 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private void Update()
     {
-        Vector3 pos = m_worldObjectDisplay.transform.position;
+        Vector3 pos = m_worldObjectDisplay.transform.localPosition;
         float movement = (m_displayMovementSpeedBase * m_lever.GetValue()) * Time.deltaTime;
         if(Mathf.Abs(m_lever.GetValue()) > m_valueThresholdForMovement && Mathf.Abs(m_displayDisplacement + movement) <= m_maxDistanceForDisplay && m_objectsBeingDisplayed)
         {
             //Move the menu
             m_displayDisplacement += movement;
-            m_worldObjectDisplay.transform.position = new Vector3(pos.x + movement, pos.y, pos.z);
+            Vector3 moveDirection = new Vector3(transform.forward.x * -movement, transform.forward.y, 0);
+            m_worldObjectDisplay.transform.localPosition = pos + moveDirection;
             for (int i = 0; i < m_activeMenuObjects.Count; i++)
             {
                 CalculateObjectsVisibility(m_activeMenuObjects[i]);
@@ -93,21 +94,6 @@ public class ItemSpawnerMenu : MonoBehaviour {
 
     private void CalculateObjectsVisibility(GameObject obj)
     {
-        //float distanceFromBoxCenter = 0.0f;
-        //distanceFromBoxCenter = Mathf.Abs(m_displayBounds.center.x - obj.transform.position.x) / (m_displayBounds.size.x / 2);
-        //print(distanceFromBoxCenter);
-        //distanceFromBoxCenter = Mathf.Abs(1 - distanceFromBoxCenter);
-        ////print(distanceFromBoxCenter);
-
-        //if(distanceFromBoxCenter > 1)
-        //{
-        //    float scaleMod = Mathf.Lerp(0.2f, 1, distanceFromBoxCenter);
-        //    scaleMod = (m_baseMenuObjectScale * scaleMod);
-        //    //print("scalemod: " + scaleMod);
-        //    obj.transform.localScale = new Vector3(scaleMod, scaleMod, scaleMod);
-        //}
-
-        //print("display size x: " + m_displayBounds.size.x);
         if(obj.GetComponent<PlaceableObject>().ObjectState == PlaceableObject.eObjectState.IN_MENU)
         {
             if(!m_displayBounds.bounds.Contains(obj.transform.position))

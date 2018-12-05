@@ -177,6 +177,7 @@ namespace VRTK
         {
             if (enabled && givenHit.transform != null && (!ControllerRequired() || VRTK_ControllerReference.IsValid(controllerReference)))
             {
+                //print("destination marker made/emitted");
                 SetHoverSelectionTimer(givenHit.collider);
                 DestinationMarkerEventArgs destinationEventArgs = SetDestinationMarkerEvent(givenHit.distance, givenHit.transform, givenHit, givenHit.point, controllerReference, false, GetCursorRotation());
                 if (pointerRenderer != null && givenHit.collider != pointerRenderer.GetDestinationHit().collider)
@@ -188,6 +189,10 @@ namespace VRTK
                     OnDestinationMarkerHover(destinationEventArgs);
                 }
                 StartUseAction(givenHit.transform);
+            }
+            else
+            {
+                print("destination marker not emitted");
             }
         }
 

@@ -19,7 +19,7 @@ public class PlaceableObject : MonoBehaviour {
     /// <summary>
     /// The distance at which the object with hover above the ground when it is selected.
     /// </summary>
-    private const int HOVER_HEIGHT = 2;
+    private const int HOVER_HEIGHT = 1;
     //delete later
         ////Fetch the Renderer from the GameObject
         //Renderer rend = GetComponent<Renderer>();

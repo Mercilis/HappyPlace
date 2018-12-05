@@ -190,7 +190,7 @@ public class GameManager : MonoBehaviour
                 GameObject obj = SpawnItemByName(s);
                 obj.SetActive(false);
                 ObjectsSortedByCategory[0].Add(obj);
-                s = s.Replace("assets/polygonnature/prefabs/plants/sm_plant_", string.Empty);
+                s = s.Replace("assets/polygonnature/prefabs/plants/sm_", string.Empty);
                 s = s.Replace('_', ' ');
                 s = s.Replace(".prefab", string.Empty);
             }
@@ -200,7 +200,7 @@ public class GameManager : MonoBehaviour
                 GameObject obj = SpawnItemByName(s);
                 obj.SetActive(false);
                 ObjectsSortedByCategory[3].Add(obj);
-                s = s.Replace("assets/polygonnature/prefabs/props/sm_prop_", string.Empty);
+                s = s.Replace("assets/polygonnature/prefabs/props/sm_", string.Empty);
                 s = s.Replace('_', ' ');
                 s = s.Replace(".prefab", string.Empty);
             }
@@ -210,7 +210,7 @@ public class GameManager : MonoBehaviour
                 GameObject obj = SpawnItemByName(s);
                 obj.SetActive(false);
                 ObjectsSortedByCategory[1].Add(obj);
-                s = s.Replace("assets/polygonnature/prefabs/trees/sm_tree_", string.Empty);
+                s = s.Replace("assets/polygonnature/prefabs/trees/sm_", string.Empty);
                 s = s.Replace('_', ' ');
                 s = s.Replace(".prefab", string.Empty);
             }
@@ -220,7 +220,7 @@ public class GameManager : MonoBehaviour
                 GameObject obj = SpawnItemByName(s);
                 obj.SetActive(false);
                 ObjectsSortedByCategory[2].Add(obj);
-                s = s.Replace("assets/polygonnature/prefabs/rocks/sm_rock_", string.Empty);
+                s = s.Replace("assets/polygonnature/prefabs/rocks/sm_", string.Empty);
                 s = s.Replace('_', ' ');
                 s = s.Replace(".prefab", string.Empty);
             }
@@ -281,7 +281,7 @@ public class GameManager : MonoBehaviour
             boxCollider.isTrigger = true;
             MeshRenderer renderer = prefab.GetComponentInChildren<MeshRenderer>();
             boxCollider.center = renderer.bounds.center;
-            boxCollider.size = renderer.bounds.size;
+            boxCollider.size = renderer.bounds.size * (name.Contains("tree") ? 0.35f : 1.0f);
 
             Rigidbody body = prefab.AddComponent<Rigidbody>();
             body.isKinematic = true;

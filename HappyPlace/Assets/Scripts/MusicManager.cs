@@ -92,15 +92,18 @@ public class MusicManager : MonoBehaviour {
 
     public void PlaySongByName(string name)
     {
-        AudioClip clip = JulianRayAssetBundle.LoadAsset<AudioClip>(name);
-        m_currentSong = clip;
-        m_currentSongName = name;
-        if(m_gameManager.GetComponent<AudioSource>().isPlaying)
+        if(name != null)
         {
-            Stop();
+            AudioClip clip = JulianRayAssetBundle.LoadAsset<AudioClip>(name);
+            m_currentSong = clip;
+            m_currentSongName = name;
+            if(m_gameManager.GetComponent<AudioSource>().isPlaying)
+            {
+                Stop();
+            }
+            m_gameManager.GetComponent<AudioSource>().clip = m_currentSong;
+            Play();
         }
-        m_gameManager.GetComponent<AudioSource>().clip = m_currentSong;
-        Play();
     }
 
     public void Play()
