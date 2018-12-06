@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class Activity : MonoBehaviour {
 
-	public string ActivityName { get; protected set; }
-    public string ActivityDescription { get; protected set; }
+    public string ActivityName;
+    public string ActivityDescription;
 
     public virtual void LoadActivity()
     {
         print("Loaded activity for " + ActivityName != null ? ActivityName : "null name");
+    }
+
+    public virtual void UnloadActivity()
+    {
+        print("Unloaded activity for " + ActivityName != null ? ActivityName : "null name");
     }
 }

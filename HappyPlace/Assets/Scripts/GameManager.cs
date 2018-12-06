@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
     private GameObject m_loadMenu = null;
     [SerializeField]
     private GameObject m_saveMenu = null;
+    [SerializeField]
+    private GameObject m_buildingBlocks = null;
 
     public GameObject CameraRig { get; private set; }
     public GameObject PlacedObjectStorage = null;
@@ -59,10 +61,7 @@ public class GameManager : MonoBehaviour
     private SceneLoader m_sceneLoader = null;
 
     public Activity CurrentActivity { get; private set; }
-    [SerializeField]
-    private GameObject m_activityManagerObject = null;
-    private ActivityManager m_activityManager = null;
-
+    
     public float GLOBAL_FLOOR_HEIGHT { get; private set; }
 
     #region AssetBundleStuff
@@ -76,6 +75,12 @@ public class GameManager : MonoBehaviour
     private MusicManager m_musicManager = null;
     public AssetBundle JulianRayAssetBundle { get; private set; }
     public string[] AllJulianRayAssetNames { get; private set; }
+
+    //Activty Asset Bundle
+    [SerializeField]
+    private GameObject m_activityManagerObject = null;
+    private ActivityManager m_activityManager = null;
+    public AssetBundle ActivityAssetBundle { get; private set; }
     #endregion
 
     #region PlayerControllers
@@ -134,6 +139,9 @@ public class GameManager : MonoBehaviour
         m_sceneLoader.SetLoadingText(m_loadingScreenVisual.GetComponentInChildren<TextMeshProUGUI>());
 
         FindAndSavePauseMenu();
+        m_activityManager = FindObjectOfType<ActivityManager>();
+        m_activityManagerObject = m_activityManager.gameObject;
+        m_activityManagerObject.SetActive(false);
         //GameObject mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
         //Button playButton = mainMenu.GetComponentInChildren<Button>();
         //playButton.onClick.AddListener(delegate { LoadRealisticForestScene(); });
@@ -147,8 +155,6 @@ public class GameManager : MonoBehaviour
     #region LoadRealisticForest
     public void LoadRealisticForestScene()
     {
-        //m_activityManagerObject.SetActive(true);
-        //m_activityManager = m_activityManagerObject.GetComponent<ActivityManager>();
         m_loadingScreenVisual.SetActive(true);
         StartCoroutine(m_sceneLoader.LoadSceneByName("RealisticForest"));
         m_mainMenuObject.SetActive(false);
@@ -479,6 +485,18 @@ public class GameManager : MonoBehaviour
         {
             m_musicMenu.SetActive(false);
         }
+    }
+
+    public void OpenActivityManagerMenu()
+    {
+        m_activityManagerObject.SetActive(true);
+        m_pauseMenu.SetActive(false);
+    }
+
+    public void CloseActivityManagerMenu()
+    {
+        m_pauseMenu.SetActive(true);
+        m_activityManagerObject.SetActive(false);
     }
 
     private void OpenPauseMenuOnButtonTwoPress(object sender, ControllerInteractionEventArgs e)
