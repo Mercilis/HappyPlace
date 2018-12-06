@@ -52,7 +52,7 @@ public class MusicManager : MonoBehaviour {
 
    private void Update()
     {
-        if(LoadedAssetBundle.isDone && !m_done && m_gameManager.JulianRayAssetBundle == null)
+        if (LoadedAssetBundle.isDone && !m_done && m_gameManager.JulianRayAssetBundle == null && JulianRayAssetBundle == null)
         {
             print("loaded julian ray asset bundle");
             m_done = true;

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Activity : MonoBehaviour {
 
-	public string ActivityName { get; protected set; }
-    public string ActivityDescription { get; protected set; }
+    public string ActivityName;
+    public string ActivityDescription;
 
     public virtual void LoadActivity()
     {

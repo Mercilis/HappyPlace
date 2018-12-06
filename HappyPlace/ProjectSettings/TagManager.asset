@@ -9,6 +9,7 @@ TagManager:
   - MainMenu
   - CameraRig
   - PlacedObjectStorage
+  - BuildingBlock
   layers:
   - Default
   - TransparentFX
